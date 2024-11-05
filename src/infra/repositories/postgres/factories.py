@@ -18,7 +18,6 @@ class PostgresSessionFactory(BaseSessionFactory):
         self._engine = create_async_engine(url=settings.db.async_dsn, echo=settings.db.show_query)
         self.async_session_maker = async_sessionmaker(self._engine, expire_on_commit=False)
 
-    @asynccontextmanager
     async def get_session(self) -> AsyncGenerator[AsyncSession, Any]:
         session: AsyncSession = self.async_session_maker()
         try:

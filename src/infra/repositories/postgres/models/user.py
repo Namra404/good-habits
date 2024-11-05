@@ -6,6 +6,7 @@ from uuid import UUID
 from src.entity.user import User
 from src.infra.repositories.postgres.factories import Base
 from src.infra.repositories.postgres.models.mixins import CreatedUpdatedMixin
+from src.infra.repositories.postgres.models.role import RoleModel
 
 
 class UserModel(CreatedUpdatedMixin, Base):
@@ -24,6 +25,6 @@ class UserModel(CreatedUpdatedMixin, Base):
             id=self.id,
             tg_id=self.tg_id,
             username=self.username,
-            role=role,
+            role_id=self.role_id,
             coin_balance=self.coin_balance,
         )
