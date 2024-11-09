@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "good-habits"
+version = "0.1.0"
+description = ""
+authors = ["Namra404 <armeno123@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+sqlalchemy = "^2.0.36"
+asyncio = "^3.4.3"
+python-dotenv = "^1.0.1"
+pydantic-settings = "^2.6.1"
+alembic = "^1.13.3"
+fastapi = "^0.115.4"
+aiogram = "^3.14.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
