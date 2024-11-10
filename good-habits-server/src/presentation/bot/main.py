@@ -13,19 +13,19 @@ from src.presentation.bot.keyboards.startup_button import markup
 load_dotenv()
 
 
-# async def lifespan(app: FastAPI) -> AsyncGenerator:
-#     await bot.set_webhook(
-#         url=os.getenv("WEBHOOK_URL")+os.getenv("WEBHOOK_PATH"),
-#         drop_pending_updates=True,
-#         allowed_updates=dp.resolve_used_update_types()
-#     )
-#     yield
-#     await bot.session.close()
+async def lifespan(app: FastAPI) -> AsyncGenerator:
+    await bot.set_webhook(
+        url=os.getenv("WEBHOOK_URL")+os.getenv("WEBHOOK_PATH"),
+        drop_pending_updates=True,
+        allowed_updates=dp.resolve_used_update_types()
+    )
+    yield
+    await bot.session.close()
 
 
 bot = Bot(token=os.getenv("BOT_TOKEN"))
 dp = Dispatcher()
-
+app = FastAPI(lifespan=lifespan)
 
 
 @dp.message(CommandStart())
