@@ -3,7 +3,7 @@ from uuid import UUID
 
 from src.entity.reward_history import RewardHistory
 from src.infra.repositories.postgres.factories import Base
-from sqlalchemy import Integer, ForeignKey, String
+from sqlalchemy import Integer, ForeignKey, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
@@ -12,7 +12,7 @@ class RewardHistoryModel(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True)
     user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'))
     coins_changes: Mapped[int]
-    reward_date: Mapped[datetime]
+    reward_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     def to_entity(self) -> RewardHistory:
         return RewardHistory(

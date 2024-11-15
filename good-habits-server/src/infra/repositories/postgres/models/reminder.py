@@ -4,7 +4,7 @@ from uuid import UUID
 from src.entity.reminder import Reminder
 
 from src.infra.repositories.postgres.factories import Base
-from sqlalchemy import Integer, ForeignKey, String
+from sqlalchemy import Integer, ForeignKey, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
@@ -13,12 +13,12 @@ class ReminderModel(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True)
     habit_id: Mapped[UUID] = mapped_column(ForeignKey('habits.id'))
     user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'))
-    reminder_time: Mapped[datetime]
+    reminder_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     frequency: Mapped[int]
-    deadline_time: Mapped[datetime]
+    deadline_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     notification_text: Mapped[str]
     is_active: Mapped[bool]
-    last_reminder_date: Mapped[datetime]
+    last_reminder_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     def to_entity(self) -> Reminder:
         return Reminder(

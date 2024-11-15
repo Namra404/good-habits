@@ -13,7 +13,7 @@ class DataBaseSettings(BaseSettings):
     host: str = Field(alias='DB_HOST')
     port: int = Field(alias='DB_PORT')
     database: str = Field(alias='DB_NAME')
-    show_query: bool = Field(alias='DB_SHOW_QUERY')
+    show_query: bool = Field(alias='DB_SHOW_QUERY', default=False)
 
     @property
     def async_dsn(self):
@@ -22,3 +22,10 @@ class DataBaseSettings(BaseSettings):
     @property
     def sync_dsn(self):
         return f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}'
+
+
+class Settings(BaseSettings):
+    db: DataBaseSettings = DataBaseSettings()
+
+
+settings = Settings()

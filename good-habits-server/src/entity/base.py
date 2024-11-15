@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from src.infra.repositories.postgres.models.mixins import get_utc_now
+from src.core.utils import get_utc_now
 
 
 @dataclass()

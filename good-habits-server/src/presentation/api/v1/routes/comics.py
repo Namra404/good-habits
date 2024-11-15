@@ -1,6 +1,5 @@
 from typing import Annotated
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import Depends, APIRouter, HTTPException
 from uuid import UUID
 
 from src.entity.comics import Comic
@@ -13,7 +12,7 @@ router = APIRouter()
 @router.get("/{comic_id}", response_model=Comic)
 async def get_comic(
         comic_id: UUID,
-        repo: Annotated[PostgresComicsRepository, get_comics_repository]
+        repo: Annotated[PostgresComicsRepository, Depends(get_comics_repository)]
 ):
     comic = await repo.get_comic_by_id(comic_id)
     if not comic:
@@ -24,7 +23,7 @@ async def get_comic(
 @router.post("/", response_model=UUID)
 async def create_comic(
         comic: Comic,
-        repo: Annotated[PostgresComicsRepository, get_comics_repository]
+        repo: Annotated[PostgresComicsRepository, Depends(get_comics_repository)]
 ):
     return await repo.create_comic(comic)
 

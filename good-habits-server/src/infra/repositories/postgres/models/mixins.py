@@ -1,10 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import DateTime
-from datetime import UTC, datetime
+from datetime import datetime
 
-
-def get_utc_now():
-    return datetime.now(UTC)
+from src.core.utils import get_utc_now
 
 
 class CreatedUpdatedMixin:
