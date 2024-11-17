@@ -9,6 +9,17 @@ from src.infra.repositories.postgres.user import PostgresUserRepository
 router = APIRouter()
 
 
+@router.get("/", response_model=list[User])
+async def get_all_users(
+        repo: Annotated[PostgresUserRepository, Depends(get_user_repository)]
+):
+    """Получение всех пользователей."""
+    users = await repo.get_all()
+    if not users:
+        raise HTTPException(status_code=404, detail="No users found")
+    return users
+
+
 @router.get("/{user_id}", response_model=User)
 async def get_user(
         user_id: UUID,

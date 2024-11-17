@@ -13,6 +13,12 @@ from src.infra.repositories.postgres.models.comics import ComicModel
 class PostgresComicsRepository:
     session: AsyncSession
 
+    async def get_all(self) -> list[Comic]:
+        """Получение всех комиксов."""
+        query = select(ComicModel)
+        result = await self.session.scalars(query)
+        return [comic.to_entity() for comic in result]
+
     async def get_comic_by_id(self, comic_id: UUID) -> Comic | None:
         query = select(ComicModel).filter_by(id=comic_id)
         result = await self.session.scalar(query)

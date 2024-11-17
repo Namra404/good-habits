@@ -14,6 +14,13 @@ from src.infra.repositories.postgres.models.user import UserModel
 class PostgresUserRepository(BaseUserRepository):
     session: AsyncSession
 
+
+    async def get_all(self) -> list[User]:
+        """Получение всех пользователей."""
+        query = select(UserModel)
+        result = await self.session.scalars(query)
+        return [user.to_entity() for user in result]
+
     async def get_user_by_id(self, user_id: UUID) -> User | None:
         """Получение пользователя по ID."""
         query = select(UserModel).filter_by(id=user_id)

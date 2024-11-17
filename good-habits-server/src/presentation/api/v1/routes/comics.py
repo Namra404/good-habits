@@ -9,6 +9,17 @@ from src.infra.repositories.postgres.comics import PostgresComicsRepository
 router = APIRouter()
 
 
+@router.get("/", response_model=list[Comic])
+async def get_all_comics(
+        repo: Annotated[PostgresComicsRepository, Depends(get_comics_repository)]
+):
+    """Получение всех комиксов."""
+    comics = await repo.get_all()
+    if not comics:
+        raise HTTPException(status_code=404, detail="No comics found")
+    return comics
+
+
 @router.get("/{comic_id}", response_model=Comic)
 async def get_comic(
         comic_id: UUID,

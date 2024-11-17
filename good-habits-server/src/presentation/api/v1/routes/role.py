@@ -40,3 +40,14 @@ async def assign_role_to_user(
     if not success:
         raise HTTPException(status_code=400, detail="Failed to assign role")
     return success
+
+
+@router.get("/", response_model=list[Role])
+async def get_all_roles(
+        repo: Annotated[PostgresRoleRepository, Depends(get_role_repository)]
+):
+    """Получение всех ролей."""
+    roles = await repo.get_all()
+    if not roles:
+        raise HTTPException(status_code=404, detail="No roles found")
+    return roles
