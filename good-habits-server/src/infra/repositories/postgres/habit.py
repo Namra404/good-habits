@@ -61,3 +61,9 @@ class PostgresHabitRepository:
         result = await self.session.execute(query)
         await self.session.commit()
         return result.rowcount > 0
+
+    async def get_all(self) -> list[Habit]:
+        """Получение всех привычек."""
+        query = select(HabitModel)
+        result = await self.session.scalars(query)
+        return [habit.to_entity() for habit in result]

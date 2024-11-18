@@ -9,6 +9,17 @@ from src.infra.repositories.postgres.habit import PostgresHabitRepository
 router = APIRouter()
 
 
+@router.get("/", response_model=list[Habit])
+async def get_all_habits(
+        repo: Annotated[PostgresHabitRepository, Depends(get_habit_repository)]
+):
+    """Получение всех привычек."""
+    habits = await repo.get_all()
+    if not habits:
+        raise HTTPException(status_code=404, detail="No habits found")
+    return habits
+
+
 @router.get("/{habit_id}", response_model=Habit)
 async def get_habit(
         habit_id: UUID,
