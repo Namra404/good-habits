@@ -9,6 +9,15 @@ from src.infra.repositories.postgres.user_habit import PostgresUserHabitProgress
 router = APIRouter()
 
 
+@router.get("/all", response_model=list[UserHabitProgress])
+async def get_all_habit_progress(
+        repo: Annotated[PostgresUserHabitProgressRepository, Depends(get_user_habit_repository)]
+):
+    """Получение всех записей о прогрессе привычек пользователей."""
+    progress = await repo.get_all()
+    return progress
+
+
 @router.get("/{user_id}/{habit_id}", response_model=UserHabitProgress)
 async def get_habit_progress(
         user_id: UUID,

@@ -7,3 +7,4 @@ from .reminder import ReminderModel
 from .user_habit_model import UserHabitProgressModel
 from .role import RoleModel
 from .reward_history import RewardHistoryModel
+from .habit_checkin import HabitCheckIn

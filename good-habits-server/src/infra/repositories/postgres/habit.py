@@ -41,7 +41,7 @@ class PostgresHabitRepository:
             .returning(HabitModel.id)
         )
         habit_id = await self.session.scalar(query)
-        await self.session.commit()  # Сохранение изменений
+        await self.session.commit()
         return habit_id
 
     async def update_habit(self, habit_id: UUID, habit_data: dict) -> bool:
