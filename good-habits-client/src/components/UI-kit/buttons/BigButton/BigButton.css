@@ -1,0 +1,27 @@
+.big-button {
+    background: linear-gradient(49deg, #FFA450 11.85%, #FF5C00 66.77%);
+    color: white;             /* Цвет текста */
+    display: flex;
+    width: 298px;
+    height: 49px;
+    padding: 11px 130px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    transition: all .3s ease-in-out;
+}
+
+.big-button:hover {
+    background: linear-gradient(90deg, #FF4500, #FF6347); /* Цвет на ховер */
+    transform: scale(1.05);   /* Увеличение при наведении */
+}
+
+.big-button:active {
+    transform: scale(0.95);   /* Легкое сжатие при клике */
+}

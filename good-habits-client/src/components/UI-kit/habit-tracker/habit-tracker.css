@@ -1,0 +1,61 @@
+.habit-tracker {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+
+}
+
+.habit-tracker.completed {
+    background-color: #e8f8e9; /* Зеленый фон */
+}
+
+.habit-tracker.not-completed {
+    background-color: #ffffff; /* Белый фон */
+}
+
+.checkbox {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.habit-details {
+    flex: 1; /* Расширяет, чтобы занимать доступное пространство */
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.habit-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.habit-tracker.completed .habit-name {
+    color: #34a853; /* Зеленый текст */
+}
+
+.habit-tracker.not-completed .habit-name {
+    color: #000000; /* Черный текст */
+}
+
+.check-in-number {
+    font-size: 14px;
+    color: #555555;
+}
+
+.three-points {
+    width: 24px;
+    height: 24px;
+    margin-left: 12px;
+    cursor: pointer;
+}
+
+.menuRef{
+    display: flex;
+    flex-direction: column;
+}

@@ -1,0 +1,40 @@
+/* Общий стиль для футера */
+.footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #ffffff;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #e0e0e0;
+    z-index: 100;
+}
+
+/* Кнопки футера */
+.footer-button {
+    background: none;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.footer-button img {
+    width: 24px;
+    height: 24px;
+}
+
+
+.footer-active-button {
+    color: #FF4500;
+}
+.footer-inactive-button {
+    color: #838383;
+}

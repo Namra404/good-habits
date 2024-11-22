@@ -1,0 +1,51 @@
+/* HomePage.css */
+.homepage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    height: 100vh; /* Полная высота экрана */
+    text-align: center; /* Центровка текста */
+}
+
+.homepage img {
+    width: 450px; /* Задаем фиксированный размер изображения */
+    margin-bottom: 20px; /* Отступ снизу */
+}
+
+.homepage h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0; /* Отступы сверху и снизу */
+    color: #333; /* Цвет текста */
+}
+
+.homepage div {
+    font-size: 16px;
+    color: #666; /* Вторичный цвет текста */
+    margin-bottom: 30px; /* Отступ снизу */
+    line-height: 1.5; /* Межстрочный интервал */
+}
+
+.big-button {
+    width: 298px;
+    height: 49px;
+    background: linear-gradient(90deg, #FFA500, #FF4500); /* Градиент */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.big-button:hover {
+    background: linear-gradient(90deg, #FF4500, #FF6347);
+    transform: scale(1.05);
+}
+
+.big-button:active {
+    transform: scale(0.95);
+}
