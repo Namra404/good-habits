@@ -25,3 +25,7 @@
 .big-button:active {
     transform: scale(0.95);   /* Легкое сжатие при клике */
 }
+
+.default-color{
+    background : lightgrey !important;
+}

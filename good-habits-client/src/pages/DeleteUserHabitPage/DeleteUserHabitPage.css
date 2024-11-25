@@ -1,0 +1,56 @@
+/* Стили для модального окна */
+.delete-modal {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Кнопка закрытия */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Иконка мусорной корзины */
+.delete-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 20px;
+}
+
+/* Заголовок */
+.delete-title {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Кнопка "Delete" */
+.big-button {
+    width: 100%;
+    max-width: 300px;
+    margin: 10px auto;
+}
+
+/* Кнопка "Cancel" */
+.cancel-button {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    text-decoration: underline;
+}

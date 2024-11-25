@@ -7,6 +7,10 @@ import HabitTrackerList from "@/components/UI-kit/habit-tracker-list/HabitTracke
 import HabitAddedPage from "@/pages/HabitAddPage/HabitAddedPage.jsx";
 import AddHabitButton from "@/components/UI-kit/buttons/AddHabitButton/AddHabitButton.jsx";
 import HomePage from "@/pages/HomePage/HomePage.jsx";
+import DeleteUserHabitPage from "@/pages/DeleteUserHabitPage/DeleteUserHabitPage.jsx";
+import LinkHabitToUser from "@/components/ChoseHabit/LinkHabitToUser.jsx";
+import CreateCustomHabit from "@/components/CreateCustomHabit/CreateCustomHabit.jsx";
+import DefaultHabits from "@/components/DefaultHabits/DefaultHabits.jsx";
 
 const hideRoutes = ['/']
 function App() {
@@ -36,6 +40,18 @@ function App() {
                     element={
                         <Layout>
                             <AddHabitButton/>
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/delete"
+                    element={
+                        <Layout>
+                            <DefaultHabits/>
+                            <LinkHabitToUser/>
+                            <DeleteUserHabitPage/>
+                            <CreateCustomHabit/>
+
                         </Layout>
                     }
                 />
