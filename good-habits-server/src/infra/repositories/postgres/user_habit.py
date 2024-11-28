@@ -11,6 +11,8 @@ from sqlalchemy.orm import joinedload
 
 from src.entity.habit_checkin import HabitCheckIn
 from src.entity.user_habit_progress import UserHabitProgress
+from src.infra.exceptions.habit import HabitNotFound
+from src.infra.exceptions.user_habit import UserHabitIsAlreadyExist
 from src.infra.repositories.postgres.factories import PostgresSessionFactory
 from src.infra.repositories.postgres.habit import PostgresHabitRepository
 from src.infra.repositories.postgres.habit_checkin import PostgresHabitCheckInRepository
@@ -70,19 +72,17 @@ class PostgresUserHabitProgressRepository:
     ) -> UUID:
         """
         Создание прогресса привычки пользователя вместе с необходимыми чек-инами.
-
-        :param user_id: ID пользователя.
-        :param habit_id: ID привычки.
-        :param start_date: Дата начала привычки.
-        :param check_ins_per_day: Количество чек-инов в день.
-        :param reward_coins: Награда в монетах за выполнение.
-        :return: ID созданного прогресса.
         """
 
+        # Проверка существования привычки
         habit = await self.habit_repository.get_habit_by_id(user_habit.habit_id)
         if not habit:
-            raise ValueError(f"Habit with ID {user_habit.habit_id} not found.")
+            raise HabitNotFound(habit_id=user_habit.habit_id)
 
+        # Проверка на существование прогресса для этой привычки и пользователя
+        existing_progress = await self.get_habit_progress(user_habit.user_id, user_habit.habit_id)
+        if existing_progress:
+            raise UserHabitIsAlreadyExist(user_id=user_habit.user_id, habit_id=user_habit.habit_id)
 
         duration_days = habit.duration_days
 
@@ -97,14 +97,12 @@ class PostgresUserHabitProgressRepository:
                 start_date=user_habit.start_date,
                 last_check_in_date=None,
                 status="in_progress",
-                checkin_amount_per_day= user_habit.checkin_amount_per_day,
+                checkin_amount_per_day=user_habit.checkin_amount_per_day,
                 reward_coins=user_habit.reward_coins,
                 completed_days=0,
             )
         )
         await self.session.execute(progress_query)
-        await self.session.commit()
-
 
         # Генерация чек-инов
         check_ins = []
@@ -120,12 +118,8 @@ class PostgresUserHabitProgressRepository:
                 )
                 check_ins.append(check_in)
 
-
-
         # Создание чек-инов через репозиторий
         await self.habit_check_in_repository.create_bulk_check_ins(check_ins)
-
-
 
         # Подтверждение изменений в базе данных
         await self.session.commit()

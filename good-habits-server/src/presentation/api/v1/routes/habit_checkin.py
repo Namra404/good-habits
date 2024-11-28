@@ -65,7 +65,7 @@ async def create_bulk_check_ins(
 @router.put("/{check_in_id}", response_model=bool)
 async def update_check_in(
         check_in_id: UUID,
-        check_in_data: HabitCheckIn,
+        check_in_data: dict,
         repo: Annotated[PostgresHabitCheckInRepository, Depends(get_habit_checkin_repository)]
 ):
     """Обновление данных чек-ина."""

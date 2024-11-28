@@ -64,3 +64,16 @@ async def get_user_by_username(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+
+@router.put("/{user_id}", response_model=bool)
+async def update_user(
+        user_id: UUID,
+        user_data: dict,  # Передаем новые данные пользователя
+        repo: Annotated[PostgresUserRepository, Depends(get_user_repository)]
+):
+    """Обновление данных пользователя."""
+    updated_user = await repo.update(user_id, user_data)
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return updated_user

@@ -73,7 +73,7 @@ class PostgresHabitCheckInRepository:
         await self.session.commit()
         return check_in_id
 
-    async def update_check_in(self, check_in_id: UUID, check_in_data: HabitCheckIn) -> bool:
+    async def update_check_in(self, check_in_id: UUID, check_in_data: dict) -> bool:
         """Обновление данных чек-ина."""
         query = (
             update(HabitCheckInModel)

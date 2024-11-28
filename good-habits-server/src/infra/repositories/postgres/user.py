@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from uuid import UUID
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,7 +13,6 @@ from src.infra.repositories.postgres.models.user import UserModel
 @dataclass
 class PostgresUserRepository(BaseUserRepository):
     session: AsyncSession
-
 
     async def get_all(self) -> list[User]:
         """Получение всех пользователей."""
@@ -61,3 +60,17 @@ class PostgresUserRepository(BaseUserRepository):
         query = select(UserModel).filter_by(username=username)
         result = await self.session.scalar(query)
         return UserModel.to_entity(result) if result else None
+
+    async def update(self, user_id: UUID, user_data: dict) -> bool:
+        """Обновление пользователя по ID."""
+        query = (
+            update(UserModel)
+            .where(UserModel.id == user_id)
+            .values(
+                **user_data
+            )
+        )
+
+        result = await self.session.execute(query)
+        await self.session.commit()
+        return result.rowcount > 0

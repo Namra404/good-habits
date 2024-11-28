@@ -11,6 +11,7 @@ import DeleteUserHabitPage from "@/pages/DeleteUserHabitPage/DeleteUserHabitPage
 import LinkHabitToUser from "@/components/ChoseHabit/LinkHabitToUser.jsx";
 import CreateCustomHabit from "@/components/CreateCustomHabit/CreateCustomHabit.jsx";
 import DefaultHabits from "@/components/DefaultHabits/DefaultHabits.jsx";
+import SettingsPage from "@/pages/SettingsPage/SettingsPage.jsx";
 
 const hideRoutes = ['/']
 function App() {
@@ -31,7 +32,12 @@ function App() {
                     path="/goal"
                     element={
                         <Layout>
-                            <HabitAddedPage/>
+                            <DefaultHabits/>
+                            <LinkHabitToUser/>
+                            <DeleteUserHabitPage/>
+                            <CreateCustomHabit/>
+                            <AddHabitButton/>
+
                         </Layout>
                     }
                 />
@@ -39,7 +45,7 @@ function App() {
                     path="/settings"
                     element={
                         <Layout>
-                            <AddHabitButton/>
+                            <SettingsPage/>
                         </Layout>
                     }
                 />
@@ -47,11 +53,7 @@ function App() {
                     path="/delete"
                     element={
                         <Layout>
-                            <DefaultHabits/>
-                            <LinkHabitToUser/>
-                            <DeleteUserHabitPage/>
-                            <CreateCustomHabit/>
-
+                            <HabitAddedPage/>
                         </Layout>
                     }
                 />

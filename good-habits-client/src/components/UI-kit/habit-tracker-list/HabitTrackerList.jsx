@@ -1,6 +1,7 @@
 import { useState } from "react";
 import HabitTracker from "@/components/UI-kit/habit-tracker/habit-tracker.jsx";
-import './HabitTrackerList.css'
+import HabitProgress from "@/components/UI-kit/habit-progress/HabitProgress.jsx";
+import "./HabitTrackerList.css";
 
 function HabitTrackerList() {
     const [checkIns, setCheckIns] = useState([
@@ -19,8 +20,12 @@ function HabitTrackerList() {
         );
     };
 
+    const totalHabits = checkIns.length;
+    const completedHabits = checkIns.filter((habit) => habit.is_completed).length;
+
     return (
         <div className="habit-tracker-list">
+            <HabitProgress totalHabits={totalHabits} completedHabits={completedHabits} />
             <div className="header">
                 <h1 className="title">Today Habit</h1>
                 <a className="see_all">See all</a>
