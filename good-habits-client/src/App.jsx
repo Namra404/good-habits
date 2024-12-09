@@ -1,9 +1,5 @@
-
 import Layout from "@/components/UI-kit/layout/layout.jsx";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import HabitTracker from "@/components/UI-kit/habit-tracker/habit-tracker.jsx";
-import {useState} from "react";
-import HabitTrackerList from "@/components/UI-kit/habit-tracker-list/HabitTrackerList.jsx";
 import HabitAddedPage from "@/pages/HabitAddPage/HabitAddedPage.jsx";
 import AddHabitButton from "@/components/UI-kit/buttons/AddHabitButton/AddHabitButton.jsx";
 import HomePage from "@/pages/HomePage/HomePage.jsx";
@@ -12,11 +8,18 @@ import LinkHabitToUser from "@/components/ChoseHabit/LinkHabitToUser.jsx";
 import CreateCustomHabit from "@/components/CreateCustomHabit/CreateCustomHabit.jsx";
 import DefaultHabits from "@/components/DefaultHabits/DefaultHabits.jsx";
 import SettingsPage from "@/pages/SettingsPage/SettingsPage.jsx";
+import ProgressPage from "@/pages/ProgressPage/ProgressPage.jsx";
+import DateSelector from "@/components/DateSelector/DateSelector.jsx";
+import HabitTrackerList from "@/components/UI-kit/habit-tracker-list/HabitTrackerList.jsx";
+import DailyHabits from "@/pages/DailyHabits/DailyHabits.jsx";
+import AllGoals from "@/pages/AllGoals/AllGoals.jsx";
+import ComicsStore from "@/pages/ComicsStore/ComicsStore.jsx";
+
 
 const hideRoutes = ['/']
+
+
 function App() {
-
-
     return (
         <BrowserRouter>
             <Routes>
@@ -24,20 +27,15 @@ function App() {
                     path="/goal-added"
                     element={
                         <Layout>
-                            <HomePage />
+                            <HomePage/>
                         </Layout>
                     }
                 />
                 <Route
-                    path="/goal"
+                    path="/progress"
                     element={
                         <Layout>
-                            <DefaultHabits/>
-                            <LinkHabitToUser/>
-                            <DeleteUserHabitPage/>
-                            <CreateCustomHabit/>
-                            <AddHabitButton/>
-
+                            <ProgressPage/>
                         </Layout>
                     }
                 />
@@ -57,6 +55,73 @@ function App() {
                         </Layout>
                     }
                 />
+                <Route
+                    path="/new-habit"
+                    element={
+                        <Layout>
+                            <div className='page'>
+                                <DefaultHabits/>
+                            </div>
+                        </Layout>
+                    }
+
+                />
+                <Route
+                    path="/new-goal"
+                    element={
+                        <Layout>
+                            <div className='page'>
+                                <LinkHabitToUser/>
+                            </div>
+                        </Layout>
+                    }
+
+                />
+                <Route
+                    path="/custom-habit"
+                    element={
+                        <Layout>
+                            <div className='page'>
+                                <CreateCustomHabit/>
+                            </div>
+                        </Layout>
+                    }
+
+                />
+                <Route
+                    path="/daily-habits"
+                    element={
+                        <Layout>
+                            <div className='page'>
+                                <DailyHabits/>
+                            </div>
+                        </Layout>
+                    }
+
+                />
+                <Route
+                    path="/all-goals"
+                    element={
+                        <Layout>
+                            <div className='page'>
+                                <AllGoals/>
+                            </div>
+                        </Layout>
+                    }
+
+                />
+                <Route
+                    path="/store"
+                    element={
+                        <Layout>
+                            <div className='page'>
+                                <ComicsStore/>
+                            </div>
+                        </Layout>
+                    }
+
+                />
+
             </Routes>
         </BrowserRouter>
     );

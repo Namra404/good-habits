@@ -1,0 +1,96 @@
+/* HabitGoalProgress.css */
+.habit-progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.habit-goal-progress-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 7px 12px 12px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.progress-goal-circle {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+
+.circle-goal-background {
+    fill: none;
+    stroke: #e5e7eb;
+}
+
+.circle-habit-progress {
+    fill: none;
+    stroke: #10b981;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.goal-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #374151;
+}
+
+.habit-details {
+    flex-grow: 1;
+    margin-left: 15px;
+}
+
+.habit-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #374151;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.habit-target {
+    font-size: 0.85em;
+    color: #6b7280;
+    margin: 5px 0;
+}
+
+.habit-status-achieved,
+.habit-status-unachieved {
+    font-size: 0.85em;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.habit-status-achieved {
+    color: #10b981;
+    background-color: #e6fffa;
+}
+
+.habit-status-unachieved {
+    color: #ef4444;
+    background-color: #fee2e2;
+}

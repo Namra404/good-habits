@@ -36,6 +36,7 @@ function HabitTrackerList() {
                         key={check_in.id}
                         check_in={check_in}
                         onCheckInChange={onCheckInChange}
+                        setCheckIns={setCheckIns}
                     />
                 ))}
             </div>

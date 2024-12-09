@@ -47,3 +47,9 @@
     background-color: #fff;
     cursor: pointer;
 }
+.create-new{
+    color: green;
+}
+.create-new:hover{
+    background-color: lightgreen !important;
+}

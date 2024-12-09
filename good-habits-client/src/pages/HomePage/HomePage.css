@@ -1,0 +1,54 @@
+.home_page {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+}
+
+.date_container {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 16px;
+}
+
+.current_date {
+    font-size: 16px;
+    color: #6c757d; /* Серый цвет */
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Приветствие */
+.header_container {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 24px;
+}
+
+.habit_tracker_list,
+.goal_habits_list {
+    width: 100%; /* Растягивается по ширине */
+    margin-bottom: 16px; /* Отступы между секциями */
+    border-radius: 8px; /* Скругленные углы */
+    padding: 16px;
+}
+
+.habit_tracker_list .header,
+.goal_habits_list .header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+
+/* AddHabitButton.css */
+.add_habit {
+    position: fixed;
+    bottom: 76px; /* Расстояние от нижнего края экрана */
+    right: 16px; /* Расстояние от правого края экрана */
+    z-index: 1000; /* Поверх всех остальных элементов */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

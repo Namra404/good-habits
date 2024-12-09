@@ -1,0 +1,71 @@
+.goals-dashboard {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 100%;
+    margin: 20px auto;
+    font-family: 'Arial', sans-serif;
+}
+
+.goals-summary {
+    text-align: center;
+}
+
+.goals-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.goals-circle {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 20px auto;
+}
+
+.goal-circle-background {
+    fill: none;
+    stroke: #e5e7eb;
+}
+
+.goal-circle-progress{
+    fill: none;
+    stroke: #f97316;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.percentage-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #f97316;
+}
+
+.goals-achieved {
+    color: #f97316;
+    font-weight: bold;
+}
+
+.goals-not-achieved {
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+.goals-see-all {
+    padding-top: 15px;
+    text-align: center;
+}
+
+.goals-see-all a {
+    color: #f97316;
+    text-decoration: none;
+    font-weight: bold;
+}

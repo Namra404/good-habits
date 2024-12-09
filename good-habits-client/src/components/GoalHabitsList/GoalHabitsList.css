@@ -1,0 +1,42 @@
+.habit-list-container {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.habit-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.habit-list-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.habit-list-see-all {
+    background: none;
+    border: none;
+    color: #ff5722;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.habit-list-see-all:hover {
+    text-decoration: underline;
+}
+
+.habit-list-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}

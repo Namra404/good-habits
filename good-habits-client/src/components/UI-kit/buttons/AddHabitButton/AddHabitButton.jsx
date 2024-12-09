@@ -1,11 +1,15 @@
 import Footer from "@/components/UI-kit/footer/Footer.jsx";
 import add_button from '@/assets/add_button.svg'
 import './AddHabitButton.css'
+import {useNavigate} from "react-router-dom";
 
 function AddHabitButton() {
 
+    const navigate = useNavigate();
+
+
     const handleClick = () => {
-        alert("Кнопка нажата!");
+        navigate('/new-habit');
     };
 
     return (

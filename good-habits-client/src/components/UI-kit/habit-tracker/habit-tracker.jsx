@@ -4,14 +4,16 @@ import three_points from "@/assets/three_points.svg";
 import './habit-tracker.css';
 import {useRef, useState} from "react";
 import useClickOutside from "@/hooks/useClickOutside.jsx";
+import DeleteUserHabitPage from "@/pages/DeleteUserHabitPage/DeleteUserHabitPage.jsx";
 
 
 
-function HabitTracker({ check_in, onCheckInChange }) {
+function HabitTracker({ check_in, onCheckInChange, setCheckIns }) {
     if (!check_in) {
         return <div className="habit-tracker">No data available</div>;
     }
     const [isOpen, setIsOpen] = useState(false)
+    const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false)
      const menuRef = useRef(null);
 
 
@@ -39,11 +41,12 @@ function HabitTracker({ check_in, onCheckInChange }) {
                     <div>
                         Edit
                     </div>
-                    <div>
+                    <div onClick={()=> setIsDeleteModalOpened(true)}>
                         Delete
                     </div>
                 </div>
             )}
+            {isDeleteModalOpened &&  <DeleteUserHabitPage id={id} onClose={() => setIsDeleteModalOpened(false)} setCheckIns={setCheckIns}/>}
         </div>
     );
 }

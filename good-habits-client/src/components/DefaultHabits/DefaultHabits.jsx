@@ -2,11 +2,12 @@ import React from "react";
 import axios from "axios";
 import "./DefaultHabits.css";
 import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx";
-import {api} from "@/lib/request.js"; // Стили компонента
+import {api} from "@/lib/request.js";
+import {useNavigate} from "react-router-dom"; // Стили компонента
 
 const DefaultHabits = () => {
     const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка для user_id
-
+    const navigate = useNavigate();
     // Замоканные дефолтные привычки
     const defaultHabits = [
         {
@@ -62,8 +63,8 @@ const DefaultHabits = () => {
 
     // Обработчик для кнопки "Создать свою" (пока ничего не делает)
     const handleCreateCustomHabit = () => {
-        console.log("Нажата кнопка 'Создать свою привычку'.");
-        // Логика будет добавлена позже
+        navigate('/new-goal');
+
     };
 
     return (

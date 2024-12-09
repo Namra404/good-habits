@@ -1,7 +1,7 @@
 import React from "react";
 import "./HabitProgress.css";
 
-function HabitProgress({ totalHabits, completedHabits }) {
+function HabitProgress({ totalHabits, completedHabits, hideProgressText = false }) {
     const percentage = Math.round((completedHabits / totalHabits) * 100);
 
     return (
@@ -27,7 +27,7 @@ function HabitProgress({ totalHabits, completedHabits }) {
                 </svg>
                 <div className="percentage">{percentage}%</div>
             </div>
-            <h2 className="progress-text">{`${completedHabits} из ${totalHabits} чек-инов сегодня!`}</h2>
+            {!hideProgressText && <h2 className="progress-text">{`${completedHabits} из ${totalHabits} чек-инов сегодня!`}</h2>}
 
         </div>
     );

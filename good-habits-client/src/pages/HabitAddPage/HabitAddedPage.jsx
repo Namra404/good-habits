@@ -1,6 +1,5 @@
 import noteSvg from "@/assets/note.svg";
 import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx";
-import "@/pages/HomePage/HomePage.css";
 import './HabitAddedPage.css'
 function HabitAddedPage() {
     const handleClick = () => {

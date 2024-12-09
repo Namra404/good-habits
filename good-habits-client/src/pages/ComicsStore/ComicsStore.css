@@ -1,0 +1,33 @@
+/* Общий стиль магазина */
+.comics-store {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.store-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.store-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.coins-display {
+    font-size: 18px;
+    background-color: #f4f4f4;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+/* Список комиксов */
+.comics-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}

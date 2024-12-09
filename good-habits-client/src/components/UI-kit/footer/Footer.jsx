@@ -15,8 +15,8 @@ const Footer = () => {
             <Link className="footer-button" to={'/goal-added'}>
                 <HomeIcon className={pathname === '/goal-added'? 'footer-active-button': 'footer-inactive-button'} alt="Home"/>
             </Link>
-            <Link className="footer-button " to={'/goal'}>
-                <ActivityIcon className={pathname === '/goal'? 'footer-active-button': 'footer-inactive-button'} alt="Activity"/>
+            <Link className="footer-button " to={'/progress'}>
+                <ActivityIcon className={pathname === '/progress'? 'footer-active-button': 'footer-inactive-button'} alt="Activity"/>
             </Link>
             <Link className="footer-button" to={'/settings'}>
                 <SettingsIcon className={pathname === '/settings'? 'footer-active-button': 'footer-inactive-button'} alt="Settings"/>

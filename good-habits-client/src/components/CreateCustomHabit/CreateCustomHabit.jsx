@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx"; // Ваш компонент Button
 import "./CreateCustomHabit.css";
 import crossSVG from "@/assets/cross.svg";
-import {api} from "@/lib/request.js"; // Стили компонента
+import {api} from "@/lib/request.js";
+import {useNavigate} from "react-router-dom"; // Стили компонента
 
 const CreateCustomHabit = () => {
+    const navigate = useNavigate();
     const [title, setTitle] = useState(""); // Название привычки
     const [description, setDescription] = useState(""); // Описание привычки
     const [duration, setDuration] = useState(1); // Длительность привычки (в днях)
@@ -28,7 +30,8 @@ const CreateCustomHabit = () => {
         // Заглушка для запроса на бэк
         try {
             const response = await api.post("/api/habits/custom", payload);
-            console.log("Ответ сервера:", response.data); //TODO: добавить сброс полей
+            console.log("Ответ сервера:", response.data);
+            navigate("/new-goal")
         } catch (error) {
             console.error("Ошибка:", error);
         }
@@ -38,7 +41,9 @@ const CreateCustomHabit = () => {
         <div className="form-container">
             {/* Кнопка закрытия */}
 
-            <img src={crossSVG} alt="busket" className="close-button"/>
+            <img src={crossSVG} alt="busket" className="close-button" onClick={() => {
+                navigate(-1)
+            }}/>
             <h1 className="form-title">Создать свою привычку</h1>
 
             <form onSubmit={handleSubmit} className="habit-form">

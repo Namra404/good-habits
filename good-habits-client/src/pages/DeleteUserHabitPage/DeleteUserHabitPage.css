@@ -1,6 +1,6 @@
 /* Стили для модального окна */
 .delete-modal {
-    position: relative;
+    position: fixed;
     background: white;
     border-radius: 12px;
     width: 90%;
@@ -10,6 +10,10 @@
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     font-family: Arial, sans-serif;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 5;
 }
 
 /* Кнопка закрытия */

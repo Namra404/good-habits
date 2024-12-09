@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx"; // Ваш компонент Button
 import "./LinkHabitToUser.css";
-import {api} from "@/lib/request.js"; // Стили компонента
-
+import {api} from "@/lib/request.js";
+import {useNavigate} from "react-router-dom";
+import crossSVG from "@/assets/cross.svg"; // Стили компонента
 const LinkHabitToUser = () => {
+
+    const navigate = useNavigate();
+
     const [habitId, setHabitId] = useState(""); // ID привычки
     const [startDate, setStartDate] = useState(""); // Дата начала
     const [checkinAmount, setCheckinAmount] = useState(1); // Чек-ины в день
@@ -44,6 +48,9 @@ const LinkHabitToUser = () => {
 
     return (
         <div className="form-container">
+            <img src={crossSVG} alt="busket" className="close-button" onClick={() => {
+                navigate(-1)
+            }}/>
             <h1 className="form-title">Create New Habit Goal</h1>
             <form onSubmit={handleSubmit} className="habit-form">
                 {/* Выбор привычки */}
@@ -62,6 +69,12 @@ const LinkHabitToUser = () => {
                             {habit.name}
                         </option>
                     ))}
+                    <option value="" onClick={(e) => {
+                        e.stopPropagation();
+                        navigate("/custom-habit")
+                    }} className="create-new">
+                        + Create new
+                    </option>
                 </select>
 
                 {/* Поле для даты начала */}
@@ -87,7 +100,7 @@ const LinkHabitToUser = () => {
                 />
 
                 {/* Кнопка создания */}
-                <Button text="Create New" type="submit" color="orange" />
+                <Button text="Create New" type="submit" color="orange"/>
             </form>
         </div>
     );
