@@ -49,3 +49,27 @@ async def update_habit_progress(
         repo: Annotated[PostgresUserHabitProgressRepository, Depends(get_user_habit_repository)]
 ):
     return await repo.update_habit_progress(progress_id, progress_data)
+
+
+@router.get("/detail/{user_id}/{habit_id}", response_model=dict)
+async def get_user_habit_details(
+        user_id: UUID,
+        habit_id: UUID,
+        repo: Annotated[PostgresUserHabitProgressRepository, Depends(get_user_habit_repository)]
+):
+    # Вызов нового метода репозитория
+    details = await repo.get_user_habit_detail(user_id, habit_id)
+    if not details:
+        raise HTTPException(status_code=404, detail="Habit progress not found")
+    return details
+
+
+@router.get("/{user_id}", response_model=list[dict])
+async def get_all_user_habits(
+        user_id: UUID,
+        repo: Annotated[PostgresUserHabitProgressRepository, Depends(get_user_habit_repository)]
+):
+    habits = await repo.get_all_user_habits(user_id)
+    if not habits:
+        raise HTTPException(status_code=404, detail="No habits found for this user")
+    return habits

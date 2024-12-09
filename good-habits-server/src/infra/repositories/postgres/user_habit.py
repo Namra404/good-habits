@@ -70,16 +70,12 @@ class PostgresUserHabitProgressRepository:
             self,
             user_habit: UserHabitProgress
     ) -> UUID:
-        """
-        Создание прогресса привычки пользователя вместе с необходимыми чек-инами.
-        """
-
         # Проверка существования привычки
         habit = await self.habit_repository.get_habit_by_id(user_habit.habit_id)
         if not habit:
             raise HabitNotFound(habit_id=user_habit.habit_id)
 
-        # Проверка на существование прогресса для этой привычки и пользователя
+        # Проверка на существование прогресса
         existing_progress = await self.get_habit_progress(user_habit.user_id, user_habit.habit_id)
         if existing_progress:
             raise UserHabitIsAlreadyExist(user_id=user_habit.user_id, habit_id=user_habit.habit_id)
@@ -104,6 +100,9 @@ class PostgresUserHabitProgressRepository:
         )
         await self.session.execute(progress_query)
 
+        # Фиксация изменений в прогрессе
+        await self.session.commit()
+
         # Генерация чек-инов
         check_ins = []
         for day in range(duration_days):
@@ -125,3 +124,79 @@ class PostgresUserHabitProgressRepository:
         await self.session.commit()
 
         return progress_id
+
+    async def get_user_habit_detail(self, user_id: UUID, habit_id: UUID) -> Optional[dict]:
+        """
+        Получение детальной информации о прогрессе привычки пользователя, включая данные о самой привычке.
+        """
+        # Запрос для прогресса привычки
+        progress_query = (
+            select(UserHabitProgressModel)
+            .filter_by(user_id=user_id, habit_id=habit_id)
+            .options(joinedload(UserHabitProgressModel.check_ins))  # Загружаем check-ins
+        )
+        progress_result = await self.session.scalar(progress_query)
+
+        if not progress_result:
+            return None
+
+        # Запрос для привычки
+        habit_query = select(HabitModel).filter_by(id=habit_id)
+        habit_result = await self.session.scalar(habit_query)
+
+        # Формируем JSON-ответ
+        progress_json = UserHabitProgressModel.to_entity(progress_result).__dict__
+        habit_json = habit_result.to_entity().__dict__ if habit_result else None
+
+        return {
+            "progress": progress_json,
+            "habit": habit_json
+        }
+
+    async def get_all_user_habits(self, user_id: UUID) -> list[dict]:
+        """
+        Получение всех привычек пользователя с их прогрессом.
+        """
+        # Запрос на прогресс всех привычек пользователя
+        progress_query = (
+            select(UserHabitProgressModel)
+            .filter(UserHabitProgressModel.user_id == user_id)
+            .options(joinedload(UserHabitProgressModel.check_ins))  # Загружаем check-ins
+        )
+
+        # Выполняем запрос и проверяем результат
+        progress_results = await self.session.scalars(progress_query)
+        progress_list = progress_results.unique().all()
+
+        if not progress_list:
+            raise HTTPException(
+                status_code=404, detail="No habits found for this user"
+            )
+
+        # Получаем список habit_id для выборки связанных привычек
+        habit_ids = [progress.habit_id for progress in progress_list]
+
+        # Запрос на привычки по списку habit_id
+        habit_query = select(HabitModel).filter(HabitModel.id.in_(habit_ids))
+        habit_results = await self.session.scalars(habit_query)
+        habit_list = habit_results.all()
+
+        if not habit_list:
+            raise HTTPException(
+                status_code=404, detail="No habits found for this user"
+            )
+
+        # Преобразуем результаты в словари
+        habits_dict = {habit.id: habit.to_entity().__dict__ for habit in habit_list}
+
+        # Формируем список ответов, соединяя прогресс с привычками
+        result = []
+        for progress in progress_list:
+            progress_json = progress.to_entity().__dict__
+            habit_json = habits_dict.get(progress.habit_id, None)
+            result.append({
+                "progress": progress_json,
+                "habit": habit_json
+            })
+
+        return result
