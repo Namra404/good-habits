@@ -1,9 +1,12 @@
 import noteSvg from "@/assets/note.svg";
 import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx";
 import './HabitAddedPage.css'
+import {useNavigate} from "react-router-dom";
 function HabitAddedPage() {
+    const navigate = useNavigate();
+
     const handleClick = () => {
-        alert("Кнопка нажата!");
+        navigate('/goal-added');
     };
 
     return (

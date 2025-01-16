@@ -55,7 +55,7 @@ function App() {
                     }
                 />
                 <Route
-                    path="/delete"
+                    path="/success"
                     element={
                         <Layout>
                             <HabitAddedPage/>

@@ -30,7 +30,7 @@ class UserHabitService {
      * @returns {Promise<UserHabitProgress[]>} Массив записей прогресса.
      */
     static async getAllHabitProgress() {
-        const response = await api.get("/habits/all");
+        const response = await api.get("/user_habit_progress/all");
         return response.data;
     }
 
@@ -41,7 +41,7 @@ class UserHabitService {
      * @returns {Promise<UserHabitProgress>} Прогресс привычки.
      */
     static async getHabitProgress(userId, habitId) {
-        const response = await api.get(`/habits/${userId}/${habitId}`);
+        const response = await api.get(`/user_habit_progress/${userId}/${habitId}`);
         return response.data;
     }
 
@@ -51,7 +51,7 @@ class UserHabitService {
      * @returns {Promise<string>} Уникальный идентификатор созданной записи.
      */
     static async createHabitProgress(progress) {
-        const response = await api.post("/habits/", progress);
+        const response = await api.post("/user_habit_progress/", progress);
         return response.data;
     }
 
@@ -62,7 +62,7 @@ class UserHabitService {
      * @returns {Promise<boolean>} True, если обновление успешно.
      */
     static async updateHabitProgress(progressId, progressData) {
-        const response = await api.put(`/habits/${progressId}`, progressData);
+        const response = await api.put(`/user_habit_progress/${progressId}`, progressData);
         return response.data;
     }
 
@@ -73,7 +73,7 @@ class UserHabitService {
      * @returns {Promise<Object>} Детали прогресса привычки.
      */
     static async getUserHabitDetails(userId, habitId) {
-        const response = await api.get(`/habits/detail/${userId}/${habitId}`);
+        const response = await api.get(`/user_habit_progress/detail/${userId}/${habitId}`);
         return response.data;
     }
 

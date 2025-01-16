@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx"; // Ваш компонент кнопки
-import "./SettingsPage.css"; // Стили для страницы
+import "./SettingsPage.css";
+import SettingsService from "@/services/Settings.jsx"; // Стили для страницы
 
 const SettingsPage = () => {
     const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка для user_id
@@ -16,8 +17,7 @@ const SettingsPage = () => {
     const fetchSettings = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`/api/settings/${userId}`);
-            const data = response.data;
+            const data = await SettingsService.getSettingsByUserId(userId);
             setSettings({
                 timezone: data.timezone,
                 language: data.language,
@@ -40,9 +40,7 @@ const SettingsPage = () => {
             };
 
             console.log("Отправляем данные для обновления:", payload);
-            const response = await axios.put(`/api/settings/${userId}`, payload);
-            console.log("Настройки успешно обновлены:", response.data);
-            alert("Настройки успешно обновлены!");
+            await SettingsService.updateSettings(userId, payload);
         } catch (err) {
             console.error("Ошибка при обновлении настроек:", err);
             setError("Не удалось обновить настройки. Попробуйте снова.");

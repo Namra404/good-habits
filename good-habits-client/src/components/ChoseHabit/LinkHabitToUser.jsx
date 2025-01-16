@@ -1,59 +1,70 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx"; // Ваш компонент Button
 import "./LinkHabitToUser.css";
 import {api} from "@/lib/request.js";
 import {useNavigate} from "react-router-dom";
-import crossSVG from "@/assets/cross.svg"; // Стили компонента
+import crossSVG from "@/assets/cross.svg";
+import HabitService from "@/services/Habit.jsx"; // Стили компонента
 const LinkHabitToUser = () => {
-
     const navigate = useNavigate();
 
-    const [habitId, setHabitId] = useState(""); // ID привычки
-    const [startDate, setStartDate] = useState(""); // Дата начала
-    const [checkinAmount, setCheckinAmount] = useState(1); // Чек-ины в день
+    const [habits, setHabits] = useState([]);
+    const [habitId, setHabitId] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [checkinAmount, setCheckinAmount] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка для user_id
-    const habits = [
-        { id: "f7b22157-b4b9-4b6f-944b-6e53822c0b84", name: "Exercise Daily" },
-        { id: "2", name: "Read Books" },
-        { id: "3", name: "Drink Water" },
-        { id: "4", name: "Sleep Early" }, // Добавлена еще одна привычка
-    ]; // Пример списка привычек
+
+    useEffect(() => {
+        const fetchHabits = async () => {
+            try {
+                const data = await HabitService.getAllHabits();
+                setHabits(data);
+            } catch (err) {
+                console.error("Ошибка при загрузке привычек:", err);
+                setError("Не удалось загрузить привычки.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchHabits();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Данные для отправки на бэк
         const payload = {
             habit_id: habitId,
             user_id: userId,
             start_date: new Date(startDate).toISOString(),
-            last_check_in_date: new Date(startDate).toISOString(), // Устанавливаем ту же дату для начала
+            last_check_in_date: new Date(startDate).toISOString(),
             checkin_amount_per_day: checkinAmount,
-            status: "active", // Статус заглушка
-            reward_coins: 0, // Заглушка
-            completed_days: 0, // Заглушка
-            check_ins: [], // Пустой массив
+            status: "start",
+            reward_coins: 1,
+            completed_days: 0,
+            check_ins: [],
         };
 
         console.log("Отправляем данные:", payload);
 
-        // Заглушка для запроса на бэк
         try {
-            const response = await api.post("/api/habits/link", payload);
+            const response = await api.post("/user_habit_progress/", payload);
             console.log("Ответ сервера:", response.data);
+            navigate("/success");
         } catch (error) {
-            console.error("Ошибка:", error);
+            console.error("Ошибка при отправке данных:", error);
         }
     };
 
+    if (loading) return <p>Загрузка привычек...</p>;
+    if (error) return <p className="error">{error}</p>;
+
     return (
         <div className="form-container">
-            <img src={crossSVG} alt="busket" className="close-button" onClick={() => {
-                navigate(-1)
-            }}/>
             <h1 className="form-title">Create New Habit Goal</h1>
             <form onSubmit={handleSubmit} className="habit-form">
-                {/* Выбор привычки */}
                 <label className="form-label">Select Habit</label>
                 <select
                     className="form-select"
@@ -66,18 +77,17 @@ const LinkHabitToUser = () => {
                     </option>
                     {habits.map((habit) => (
                         <option key={habit.id} value={habit.id}>
-                            {habit.name}
+                            {habit.title}
                         </option>
                     ))}
                     <option value="" onClick={(e) => {
                         e.stopPropagation();
-                        navigate("/custom-habit")
+                        navigate("/custom-habit");
                     }} className="create-new">
                         + Create new
                     </option>
                 </select>
 
-                {/* Поле для даты начала */}
                 <label className="form-label">Start Date</label>
                 <input
                     className="form-input"
@@ -87,7 +97,6 @@ const LinkHabitToUser = () => {
                     required
                 />
 
-                {/* Поле для количества чек-инов */}
                 <label className="form-label">Check-ins per Day</label>
                 <input
                     className="form-input"
@@ -99,8 +108,7 @@ const LinkHabitToUser = () => {
                     required
                 />
 
-                {/* Кнопка создания */}
-                <Button text="Create New" type="submit" color="orange"/>
+                <Button text="Create New" type="submit" color="orange" />
             </form>
         </div>
     );

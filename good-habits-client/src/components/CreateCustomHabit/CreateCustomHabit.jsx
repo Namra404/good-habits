@@ -16,34 +16,35 @@ const CreateCustomHabit = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Данные для отправки на бэк
+        // Формируем данные для отправки
         const payload = {
             user_id: userId,
             title,
             description,
-            duration_days: duration,
+            duration_days: parseInt(duration, 10), // Преобразуем длительность в число
             goal,
         };
 
         console.log("Отправляем данные:", payload);
 
-        // Заглушка для запроса на бэк
         try {
-            const response = await api.post("/api/habits/custom", payload);
-            console.log("Ответ сервера:", response.data);
-            navigate("/new-goal")
+            // Отправляем запрос на сервер
+            const response = await api.post("/habits/", payload);
+
+            console.log("Привычка успешно создана:", response.data);
+
+            // После успешного создания перенаправляем на страницу "Новая цель"
+            navigate("/new-goal");
         } catch (error) {
-            console.error("Ошибка:", error);
+            console.error("Ошибка при создании привычки:", error);
         }
     };
 
     return (
         <div className="form-container">
             {/* Кнопка закрытия */}
+            <img src={crossSVG} alt="busket" className="close-button" onClick={() => navigate(-1)} />
 
-            <img src={crossSVG} alt="busket" className="close-button" onClick={() => {
-                navigate(-1)
-            }}/>
             <h1 className="form-title">Создать свою привычку</h1>
 
             <form onSubmit={handleSubmit} className="habit-form">
@@ -93,7 +94,7 @@ const CreateCustomHabit = () => {
                 />
 
                 {/* Кнопка создания */}
-                <Button text="Создать" type="submit" color="orange"/>
+                <Button text="Создать" type="submit" color="orange" />
             </form>
         </div>
     );
