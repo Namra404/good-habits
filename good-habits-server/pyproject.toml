@@ -12,11 +12,12 @@ asyncio = "^3.4.3"
 python-dotenv = "^1.0.1"
 pydantic-settings = "^2.6.1"
 alembic = "^1.13.3"
-fastapi = "^0.115.4"
 aiogram = "^3.14.0"
-uvicorn = "^0.32.0"
+uvicorn = "0.32.1"
 asyncpg = "^0.30.0"
 psycopg2 = "^2.9.10"
+fastapi = "0.115.4"
+starlette = "0.41.0"
 
 
 [build-system]

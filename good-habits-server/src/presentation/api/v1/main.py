@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 # from src.presentation.api.v1.routes import comics, reward_history, role, settings, user_comics, user_habit, user, \
 #     reminder, habit
@@ -7,7 +8,13 @@ from src.presentation.api.v1.routes import user, comics, reward_history, habit, 
 
 app = FastAPI()
 
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Замените на ваш фронтенд-URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Подключаем все маршруты
 app.include_router(comics.router, prefix="/comics", tags=["Comics"])

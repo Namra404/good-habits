@@ -1,14 +1,30 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import HabitTracker from "@/components/UI-kit/habit-tracker/habit-tracker.jsx";
 import HabitProgress from "@/components/UI-kit/habit-progress/HabitProgress.jsx";
 import "./HabitTrackerList.css";
+import CheckinService from "@/services/Сheckin.jsx";
+import UserService from "@/services/User.jsx";
 
 function HabitTrackerList() {
-    const [checkIns, setCheckIns] = useState([
-        { id: 1, title: "Meditating", is_completed: true, check_in_number: 1 },
-        { id: 2, title: "Read Philosophy", is_completed: true, check_in_number: 2 },
-        { id: 3, title: "Journaling", is_completed: false, check_in_number: 3 },
-    ]);
+    const [checkIns, setCheckIns] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const userId = UserService.getMockedUserId();
+
+    useEffect(() => {
+        const fetchCheckIns = async () => {
+            try {
+                // Выполняем запрос для получения чек-инов
+                const fetchedCheckIns = await CheckinService.getTodayCheckIns(userId);
+                setCheckIns(fetchedCheckIns || []); // Если ответ пустой, устанавливаем пустой массив
+            } catch (error) {
+                console.error("Failed to fetch check-ins:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCheckIns();
+    }, [userId]);
 
     const onCheckInChange = (id, newStatus) => {
         setCheckIns((state) =>
@@ -23,6 +39,10 @@ function HabitTrackerList() {
     const totalHabits = checkIns.length;
     const completedHabits = checkIns.filter((habit) => habit.is_completed).length;
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div className="habit-tracker-list">
             <HabitProgress totalHabits={totalHabits} completedHabits={completedHabits} />
@@ -31,14 +51,20 @@ function HabitTrackerList() {
                 <a className="see_all">See all</a>
             </div>
             <div className="habit-list">
-                {checkIns.map((check_in) => (
-                    <HabitTracker
-                        key={check_in.id}
-                        check_in={check_in}
-                        onCheckInChange={onCheckInChange}
-                        setCheckIns={setCheckIns}
-                    />
-                ))}
+                {checkIns.length > 0 ? (
+                    checkIns.map((check_in) => (
+                        <HabitTracker
+                            key={check_in.id}
+                            check_in={check_in}
+                            onCheckInChange={onCheckInChange}
+                            setCheckIns={setCheckIns}
+                        />
+                    ))
+                ) : (
+                    <div className="empty-state">
+                        <p>No habits to track today. Add new habits to get started!</p>
+                    </div>
+                )}
             </div>
         </div>
     );

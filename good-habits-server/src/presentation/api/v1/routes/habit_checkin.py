@@ -94,6 +94,4 @@ async def get_today_check_ins(
 ):
     """Получение всех чек-инов пользователя за сегодняшний день."""
     today_check_ins = await repo.get_today_check_ins_by_user_id(user_id)
-    if not today_check_ins:
-        raise HTTPException(status_code=404, detail="No check-ins found for today")
     return today_check_ins

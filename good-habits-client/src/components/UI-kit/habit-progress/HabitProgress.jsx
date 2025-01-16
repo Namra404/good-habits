@@ -2,7 +2,8 @@ import React from "react";
 import "./HabitProgress.css";
 
 function HabitProgress({ totalHabits, completedHabits, hideProgressText = false }) {
-    const percentage = Math.round((completedHabits / totalHabits) * 100);
+    // Проверяем, чтобы избежать деления на 0
+    const percentage = totalHabits > 0 ? Math.round((completedHabits / totalHabits) * 100) : 0;
 
     return (
         <div className="habit-progress-card">
@@ -22,13 +23,20 @@ function HabitProgress({ totalHabits, completedHabits, hideProgressText = false 
                         r="45"
                         strokeWidth="10"
                         strokeDasharray="282"
-                        strokeDashoffset={(1 - completedHabits / totalHabits) * 282}
+                        strokeDashoffset={
+                            totalHabits > 0 ? (1 - completedHabits / totalHabits) * 282 : 282
+                        }
                     />
                 </svg>
                 <div className="percentage">{percentage}%</div>
             </div>
-            {!hideProgressText && <h2 className="progress-text">{`${completedHabits} из ${totalHabits} чек-инов сегодня!`}</h2>}
-
+            {!hideProgressText && (
+                <h2 className="progress-text">
+                    {totalHabits > 0
+                        ? `${completedHabits} из ${totalHabits} чек-инов сегодня!`
+                        : "Сегодня нет чек-инов!"}
+                </h2>
+            )}
         </div>
     );
 }
