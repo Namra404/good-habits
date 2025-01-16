@@ -5,6 +5,7 @@ from uuid import UUID
 
 from src.entity.settings import Settings
 from src.infra.dependencies.setttings import get_settings_repository
+from src.infra.exceptions.settings import SettingsAlreadyExist
 from src.infra.repositories.postgres.settings import PostgresSettingsRepository
 
 router = APIRouter()
@@ -26,7 +27,12 @@ async def create_settings(
         settings: Settings,
         repo: Annotated[PostgresSettingsRepository, Depends(get_settings_repository)]
 ):
-    return await repo.create_settings(settings)
+    try:
+        return await repo.create_settings(settings)
+    except SettingsAlreadyExist as e:
+        raise e  # Пробрасываем кастомное исключение
+    except HTTPException as e:
+        raise e
 
 
 @router.put("/user/{user_id}", response_model=bool)
