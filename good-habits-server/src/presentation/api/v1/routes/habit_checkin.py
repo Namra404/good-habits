@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException
 from uuid import UUID
 from typing import Annotated
@@ -88,10 +90,11 @@ async def delete_check_in(
 
 
 @router.get("/today/{user_id}", response_model=list[HabitCheckIn])
-async def get_today_check_ins(
+async def get_check_ins_by_date(
         user_id: UUID,
-        repo: Annotated[PostgresHabitCheckInRepository, Depends(get_habit_checkin_repository)]
+        repo: Annotated[PostgresHabitCheckInRepository, Depends(get_habit_checkin_repository)],
+        specific_date: date | None = None
 ):
-    """Получение всех чек-инов пользователя за сегодняшний день."""
-    today_check_ins = await repo.get_today_check_ins_by_user_id(user_id)
+    """Получение всех чек-инов пользователя за конкретный день."""
+    today_check_ins = await repo.get_check_ins_by_user_id_and_date(user_id, specific_date)
     return today_check_ins

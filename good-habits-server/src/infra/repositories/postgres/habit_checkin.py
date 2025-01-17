@@ -91,15 +91,16 @@ class PostgresHabitCheckInRepository:
         await self.session.commit()
         return result.rowcount > 0
 
-    async def get_today_check_ins_by_user_id(self, user_id: UUID) -> list[HabitCheckIn]:
-        """Получение всех чек-инов пользователя за сегодняшний день."""
-        today = date.today()
+    async def get_check_ins_by_user_id_and_date(self, user_id: UUID, specific_date: date | None = None) -> list[
+        HabitCheckIn]:
+        """Получение всех чек-инов пользователя за определенную дату."""
+        target_date = specific_date or date.today()
         query = (
             select(HabitCheckInModel)
             .join(UserHabitProgressModel, HabitCheckInModel.progress_id == UserHabitProgressModel.id)
             .filter(
                 UserHabitProgressModel.user_id == user_id,
-                func.date(HabitCheckInModel.check_in_date) == today
+                func.date(HabitCheckInModel.check_in_date) == target_date
             )
         )
         result = await self.session.execute(query)
