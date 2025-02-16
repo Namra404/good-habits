@@ -15,6 +15,9 @@ import DailyHabits from "@/pages/DailyHabits/DailyHabits.jsx";
 import AllGoals from "@/pages/AllGoals/AllGoals.jsx";
 import ComicsStore from "@/pages/ComicsStore/ComicsStore.jsx";
 import UserProfile from "@/pages/UserProfile/UserProfile.jsx";
+import PurchasedComicsPage from "@/pages/PurchasedComicsPage/PurchasedComicsPage.jsx";
+import HabitHistory from "@/pages/HabitHistory/HabitHistory.jsx";
+import TelegramIntegration from "@/lib/TelegramIntegration.jsx";
 
 
 const hideRoutes = ['/']
@@ -31,7 +34,7 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route
-                    path="/goal-added"
+                    path="/"
                     element={
                         <Layout>
                             <HomePage/>
@@ -138,6 +141,26 @@ function App() {
                         </Layout>
                     }
 
+                />
+                <Route
+                    path="/purchased-comics"
+                    element={
+                        <Layout>
+                            <div className='page'>
+                                <PurchasedComicsPage/>
+                            </div>
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/habit-history"
+                    element={
+                        <Layout>
+                            <div className='page'>
+                                <HabitHistory/>
+                            </div>
+                        </Layout>
+                    }
                 />
 
             </Routes>

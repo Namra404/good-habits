@@ -1,0 +1,132 @@
+/*.habit-history-container {*/
+/*    max-width: 800px;*/
+/*    margin: 0 auto;*/
+/*    padding: 20px;*/
+/*    background-color: white;*/
+/*    border-radius: 10px;*/
+/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+/*    font-family: Arial, sans-serif;*/
+/*}*/
+
+/*!* Заголовок *!*/
+/*.title {*/
+/*    text-align: center;*/
+/*    font-size: 24px;*/
+/*    font-weight: bold;*/
+/*    color: black;*/
+/*    margin-bottom: 20px;*/
+/*}*/
+
+/*!* Стиль списка привычек *!*/
+/*.habit-list {*/
+/*    list-style: none;*/
+/*    padding: 0;*/
+/*}*/
+
+/*.habit-item {*/
+/*    background: #ffe0b2;*/
+/*    padding: 15px;*/
+/*    margin-bottom: 10px;*/
+/*    border-radius: 8px;*/
+/*    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+/*!* Заголовки привычек *!*/
+/*.habit-title {*/
+/*    font-size: 18px;*/
+/*    font-weight: bold;*/
+/*    cursor: pointer;*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*    padding: 10px;*/
+/*    background: #ff9800;*/
+/*    color: white;*/
+/*    border-radius: 6px;*/
+/*}*/
+
+/*.habit-title:hover {*/
+/*    background: #e65100;*/
+/*}*/
+
+/*!* Детали привычек *!*/
+/*.habit-details {*/
+/*    margin-top: 10px;*/
+/*    padding: 10px;*/
+/*    background: #ffcc80;*/
+/*    border-radius: 6px;*/
+/*}*/
+
+/*!* Информация о прогрессе *!*/
+/*.progress-info, .progress-date {*/
+/*    font-size: 14px;*/
+/*    color: #6d4c41;*/
+/*}*/
+
+/*!* Чек-ины *!*/
+/*.checkins-toggle {*/
+/*    font-size: 16px;*/
+/*    font-weight: bold;*/
+/*    cursor: pointer;*/
+/*    margin-top: 10px;*/
+/*    text-align: center;*/
+/*    background: #ffb74d;*/
+/*    color: white;*/
+/*    padding: 8px;*/
+/*    border-radius: 6px;*/
+/*}*/
+
+/*.checkins-toggle:hover {*/
+/*    background: #e65100;*/
+/*}*/
+
+/*!* Список чек-инов *!*/
+/*.check-in-list {*/
+/*    list-style: none;*/
+/*    padding: 0;*/
+/*    margin-top: 10px;*/
+/*}*/
+
+/*.check-in-item {*/
+/*    padding: 10px;*/
+/*    margin-bottom: 5px;*/
+/*    border-radius: 6px;*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.completed {*/
+/*    background: #ffcc80;*/
+/*    color: #e65100;*/
+/*    border: 1px solid #ff9800;*/
+/*}*/
+
+/*.not-completed {*/
+/*    background: #ff8a65;*/
+/*    color: white;*/
+/*    border: 1px solid #d84315;*/
+/*}*/
+
+/*.check-in-date, .check-in-number, .check-in-status {*/
+/*    font-size: 14px;*/
+/*    font-weight: bold;*/
+/*}*/
+
+/*!* Кнопка Load More *!*/
+/*.load-more-button {*/
+/*    display: block;*/
+/*    width: 100%;*/
+/*    margin-top: 10px;*/
+/*    padding: 10px;*/
+/*    background: #ff9800;*/
+/*    color: white;*/
+/*    border: none;*/
+/*    border-radius: 6px;*/
+/*    cursor: pointer;*/
+/*    font-size: 16px;*/
+/*}*/
+
+/*.load-more-button:hover {*/
+/*    background: #e65100;*/
+/*}*/

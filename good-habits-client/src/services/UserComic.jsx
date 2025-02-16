@@ -15,7 +15,7 @@ class UserComicService {
      * @returns {Promise<UserComic[]>} Массив пользовательских комиксов.
      */
     static async getUserComics(userId) {
-        const response = await api.get(`/user-comics/user/${userId}`);
+        const response = await api.get(`/user_comics/user/${userId}`);
         return response.data;
     }
 
@@ -25,7 +25,7 @@ class UserComicService {
      * @returns {Promise<string>} Уникальный идентификатор созданной записи.
      */
     static async addUserComic(userComic) {
-        const response = await api.post("/user-comics/", userComic);
+        const response = await api.post("/user_comics/", userComic);
         return response.data;
     }
 }

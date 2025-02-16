@@ -58,4 +58,5 @@
 .menuRef{
     display: flex;
     flex-direction: column;
+    cursor: pointer;
 }

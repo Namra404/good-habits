@@ -2,95 +2,39 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import HabitGoalProgress from '@/components/HabitProgress/HabitGoalProgress.jsx';
 import './GoalsDashboard.css';
+import UserHabitService from "@/services/UserHabit.jsx";
 
 const GoalsDashboard = () => {
-    const [habitData, setHabitData] = useState([]);
+    const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+    const [habits, setHabits] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchHabitData = async () => {
+        const fetchHabitProgress = async () => {
             try {
-                // Имитация получения данных с бэка
-                const response = await new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve({
-                            data: [
-                                {
-                                    habit: {
-                                        id: 'f7b22157-b4b9-4b6f-944b-6e53822c0b84',
-                                        title: 'Journaling Everyday',
-                                        description: 'Write in your journal every day.',
-                                        duration_days: 5,
-                                        goal: 'Write daily to improve mindfulness',
-                                    },
-                                    progress: {
-                                        status: 'achieved',
-                                        completed_days: 1,
-                                        check_ins: [
-                                            {
-                                                id: 'f4ed7364-16c3-43f8-93f0-e61aae5f2507',
-                                                check_in_date: '2024-11-22T07:27:15.092000Z',
-                                                check_in_number: 1,
-                                                is_completed: true,
-                                            },
-                                            {
-                                                id: 'e8f2ab0c-42a9-4a18-bfb6-4b59bc352e1c',
-                                                check_in_date: '2024-11-22T07:27:15.092000Z',
-                                                check_in_number: 2,
-                                                is_completed: false,
-                                            },
-                                            // Другие данные check-in...
-                                        ],
-                                    },
-                                },
-                                {
-                                    habit: {
-                                        id: '3baa6169-433b-4a16-8066-d18629078bdd',
-                                        title: 'Vitamin',
-                                        description: 'Take vitamins every day.',
-                                        duration_days: 22,
-                                        goal: 'Take vitamins every morning',
-                                    },
-                                    progress: {
-                                        status: 'in_progress',
-                                        completed_days: 0,
-                                        check_ins: [
-                                            {
-                                                id: 'e2de7c58-a636-4867-84e7-026c752c01f2',
-                                                check_in_date: '2024-12-05T10:26:35.080000Z',
-                                                check_in_number: 1,
-                                                is_completed: false,
-                                            },
-                                            {
-                                                id: 'b74c478e-f717-4f3a-a361-77333cabfd19',
-                                                check_in_date: '2024-12-05T10:26:35.080000Z',
-                                                check_in_number: 2,
-                                                is_completed: false,
-                                            },
-                                            // Другие данные check-in...
-                                        ],
-                                    },
-                                },
-                            ],
-                        });
-                    }, 1000);
-                });
-                setHabitData(response.data);
+                const data = await UserHabitService.getAllUserHabits(userId);
+                setHabits(data);
             } catch (err) {
-                setError('Failed to load habit data');
+                console.error("Ошибка загрузки привычек:", err);
+                setError("Не удалось загрузить данные. Попробуйте позже.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchHabitData();
-    }, []);
+        fetchHabitProgress();
+    }, [userId]);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
+    const calculateProgressPercentage = (completed, duration) => {
+        return duration > 0 ? Math.min((completed / duration) * 100, 100) : 0;
+    };
 
-    const percentage = 60; // Example percentage for the progress circle
+    const achievedGoals = habits.filter(habit => habit.progress.status === "achieved");
+    const unachievedGoals = habits.filter(habit => habit.progress.status !== "achieved");
+
+    if (loading) return <div>Загрузка...</div>;
+    if (error) return <div className="error">{error}</div>;
 
     return (
         <div className="goals-dashboard">
@@ -112,17 +56,77 @@ const GoalsDashboard = () => {
                             r="54"
                             strokeWidth="12"
                             strokeDasharray="339.292"
-                            strokeDashoffset={(1 - percentage / 100) * 339.292}
+                            strokeDashoffset={(1 - achievedGoals.length / habits.length) * 339.292}
                         />
                     </svg>
-                    <div className="percentage-text">{percentage}%</div>
+                    <div className="percentage-text">
+                        {Math.round((achievedGoals.length / habits.length) * 100)}%
+                    </div>
                 </div>
-                <p className="goals-achieved">✔ 11 Habits goal has achieved</p>
-                <p className="goals-not-achieved">✖ 6 Habits goal hasn’t achieved</p>
+                <p className="goals-achieved">
+                    ✔ {achievedGoals.length} Habits goal has achieved
+                </p>
+                <p className="goals-not-achieved">
+                    ✖ {unachievedGoals.length} Habits goal hasn’t achieved
+                </p>
             </div>
-            <HabitGoalProgress habitData={habitData} />
-            <div className="goals-see-all">
-                <a href="#">See All</a>
+            <div className="habit-list">
+                {habits.map(habitData => (
+                    <HabitCard
+                        key={habitData.habit.id}
+                        habitData={habitData}
+                        calculateProgress={calculateProgressPercentage}
+                    />
+                ))}
+            </div>
+            {/*<div className="goals-see-all">*/}
+            {/*    <a href="#">See All</a>*/}
+            {/*</div>*/}
+        </div>
+    );
+};
+
+const HabitCard = ({ habitData, calculateProgress }) => {
+    const { habit, progress } = habitData;
+    const progressPercentage = calculateProgress(progress.completed_days, habit.duration_days);
+
+    return (
+        <div className="habit-card">
+            <div className="habit-progress-circle">
+                <svg width="50" height="50" viewBox="0 0 50 50">
+                    <circle
+                        className="habit-circle-background"
+                        cx="25"
+                        cy="25"
+                        r="20"
+                        strokeWidth="5"
+                    />
+                    <circle
+                        className="habit-circle-progress"
+                        cx="25"
+                        cy="25"
+                        r="20"
+                        strokeWidth="5"
+                        strokeDasharray="125.6"
+                        strokeDashoffset={(1 - progressPercentage / 100) * 125.6}
+                    />
+                </svg>
+                <div className="habit-percentage-text">
+                    {Math.round(progressPercentage)}%
+                </div>
+            </div>
+            <div className="habit-info">
+                <h3 className="habit-title">{habit.title}</h3>
+                <p className="habit-status">
+                    {progress.status === "achieved" ? (
+                        <span className="status-achieved">Achieved</span>
+                    ) : (
+                        <span className="status-unachieved">Unachieved</span>
+                    )}
+                </p>
+                <p className="habit-details">
+                    {progress.completed_days} from {habit.duration_days} target
+                </p>
             </div>
         </div>
     );

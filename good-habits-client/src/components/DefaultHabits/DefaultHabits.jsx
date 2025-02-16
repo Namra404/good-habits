@@ -69,7 +69,7 @@ const DefaultHabits = () => {
             });
 
             console.log("Привычка успешно добавлена:", progressResponse);
-            navigate('/goal-added')
+            navigate('/')
         } catch (error) {
             console.error("Ошибка при добавлении привычки или прогресса:", error);
         }

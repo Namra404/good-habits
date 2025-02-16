@@ -4,19 +4,24 @@ import "./UserProfile.css";
 import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx";
 import {useNavigate} from "react-router-dom";
 
+
 const UserProfile = ({ user }) => {
     const navigate = useNavigate();
 
     const handleOpenSettings = () => {
-        navigate('/settings');
+        navigate("/settings");
     };
 
     const handleViewPurchasedComics = () => {
-        alert("Purchased comics page is under development.");
+        navigate("/purchased-comics");
     };
 
     const handleViewHabitHistory = () => {
         alert("Habit history page is under development.");
+    };
+
+    const handleGoToStore = () => {
+        navigate("/store");
     };
 
     return (
@@ -45,6 +50,11 @@ const UserProfile = ({ user }) => {
                     text="Open Settings"
                     onClick={handleOpenSettings}
                     color="orange"
+                />
+                <Button
+                    text="Go to Comics Store"
+                    onClick={handleGoToStore}
+                    color="blue"
                 />
             </div>
         </div>

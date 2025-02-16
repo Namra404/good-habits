@@ -12,8 +12,8 @@ const Footer = () => {
     console.log(pathname);
     return (
         <footer className="footer">
-            <Link className="footer-button" to={'/goal-added'}>
-                <HomeIcon className={pathname === '/goal-added'? 'footer-active-button': 'footer-inactive-button'} alt="Home"/>
+            <Link className="footer-button" to={'/'}>
+                <HomeIcon className={pathname === '/'? 'footer-active-button': 'footer-inactive-button'} alt="Home"/>
             </Link>
             <Link className="footer-button " to={'/progress'}>
                 <ActivityIcon className={pathname === '/progress'? 'footer-active-button': 'footer-inactive-button'} alt="Activity"/>

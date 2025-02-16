@@ -3,6 +3,10 @@ import "./GoalHabitsList.css";
 import GoalHabitProgressCard from "@/components/GoalHabitProgressCard/GoalHabitProgressCard.jsx";
 
 const GoalHabitsList = ({ habitsData }) => {
+    if (!habitsData || habitsData.length === 0) {
+        return <div>No goals to display.</div>;
+    }
+
     return (
         <div className="habit-list-container">
             <div className="habit-list-header">
@@ -14,7 +18,8 @@ const GoalHabitsList = ({ habitsData }) => {
                     <GoalHabitProgressCard
                         key={habit.id}
                         title={habit.title}
-                        completedDays={progress.completed_days}
+                        description={habit.description}
+                        completedDays={progress?.completed_days || 0}
                         totalDays={habit.duration_days}
                         frequency="Everyday" // Заглушка для частоты
                     />

@@ -6,7 +6,7 @@ function HabitAddedPage() {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate('/goal-added');
+        navigate('/');
     };
 
     return (

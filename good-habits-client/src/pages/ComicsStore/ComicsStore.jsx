@@ -1,39 +1,84 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 
 import "./ComicsStore.css";
 import ComicCard from "@/components/ComicCard/ComicCard.jsx";
+import ComicService from "@/services/Сomic.jsx";
+import UserComicService from "@/services/UserComic.jsx";
+import UserService from "@/services/User.jsx";
 
 const ComicsStore = () => {
-    const [coins, setCoins] = useState(100); // Внутриигровая валюта
-    const [comics] = useState([
-        {
-            id: "1",
-            title: "The Amazing Spider-Man",
-            description: "Join Spider-Man on his thrilling adventures in New York City.",
-            price: 25,
-        },
-        {
-            id: "2",
-            title: "Batman: The Dark Knight",
-            description: "Dive into Gotham City's dark alleys with the Dark Knight.",
-            price: 30,
-        },
-        {
-            id: "3",
-            title: "Wonder Woman: Warrior's Journey",
-            description: "Experience the epic journey of Wonder Woman.",
-            price: 20,
-        },
-    ]);
+    const userId = UserService.getMockedUserId(); // Получение замоканного ID пользователя
+    const [coins, setCoins] = useState(0); // Баланс пользователя
+    const [comics, setComics] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const handleBuyComic = (price) => {
-        if (coins >= price) {
-            setCoins(coins - price);
-            alert("Comic purchased successfully!");
-        } else {
-            alert("Not enough coins!");
+    // Загружаем данные о пользователе и комиксах
+    useEffect(() => {
+        const fetchUserDataAndComics = async () => {
+            try {
+                // Загружаем баланс пользователя
+                const user = await UserService.getUserById(userId); // API для получения пользователя
+                setCoins(user.coin_balance);
+
+                // Загружаем список комиксов
+                const allComics = await ComicService.getAllComics();
+                setComics(allComics);
+            } catch (error) {
+                console.error("Ошибка при загрузке данных:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUserDataAndComics();
+    }, [userId]);
+
+    // Покупка комикса
+    const handleBuyComic = async (comic) => {
+        if (coins < comic.price) {
+            alert("Недостаточно монет!");
+            return;
+        }
+
+        try {
+            // Отправляем запрос на добавление комикса пользователю
+            await UserComicService.addUserComic({
+                user_id: userId,
+                comic_id: comic.id,
+            });
+
+            // Обновляем баланс локально
+            setCoins((prevCoins) => prevCoins - comic.price);
+            alert("Комикс успешно куплен!");
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                const errorDetail = error.response.data.detail;
+
+                // Обработка сообщений об ошибках
+                if (errorDetail.includes("has already purchased comic")) {
+                    alert("Вы уже купили этот комикс!");
+                } else if (errorDetail.includes("insufficient balance")) {
+                    const match = errorDetail.match(/Required: (\d+), Available: (\d+)/);
+                    if (match) {
+                        const required = match[1];
+                        const available = match[2];
+                        alert(`Недостаточно монет! Необходимо: ${required}, доступно: ${available}.`);
+                    } else {
+                        alert("Недостаточно монет!");
+                    }
+                } else {
+                    alert("Ошибка: " + errorDetail);
+                }
+            } else {
+                console.error("Ошибка при покупке комикса:", error);
+                alert("Не удалось купить комикс. Попробуйте снова.");
+            }
         }
     };
+
+    if (isLoading) {
+        return <div>Загрузка данных...</div>;
+    }
 
     return (
         <div className="comics-store">
@@ -48,7 +93,7 @@ const ComicsStore = () => {
                     <ComicCard
                         key={comic.id}
                         comic={comic}
-                        onBuy={() => handleBuyComic(comic.price)}
+                        onBuy={() => handleBuyComic(comic)}
                     />
                 ))}
             </div>

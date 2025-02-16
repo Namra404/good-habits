@@ -2,29 +2,25 @@ import HabitTracker from "@/components/UI-kit/habit-tracker/habit-tracker.jsx";
 import DateSelector from "@/components/DateSelector/DateSelector.jsx";
 import {api} from "@/lib/request.js";
 import { useState, useEffect } from "react"
+import CheckinService from "@/services/Сheckin.jsx";
+import "./DailyHabits.css";
 
 const DailyHabits = () => {
-    const [selectedDate, setSelectedDate] = useState("2024-03-01");
-    const [checkIns, setCheckIns] = useState([
-        { id: 1, title: "Meditating", is_completed: true, check_in_number: 1 },
-        { id: 2, title: "Read Philosophy", is_completed: true, check_in_number: 2 },
-        { id: 3, title: "Journaling", is_completed: false, check_in_number: 3 },
-    ]);
+    const [selectedDate, setSelectedDate] = useState(getCurrentWeek()[0]); // Начало недели
+    const [checkIns, setCheckIns] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const loadHabits = async () => {
+            setIsLoading(true);
             try {
-                // Заглушка: передайте дату как payload
-                const payload = { date: selectedDate };
-                const response = await api.post("/api/habits/by_date", payload);
-
-                // Временно логируем ответ
-                console.log("API response:", response.data);
-
-                // Для дальнейшей реализации: раскомментируйте для обновления checkIns
-                // setCheckIns(response.data);
+                const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка userId
+                const response = await CheckinService.getTodayCheckIns(userId, selectedDate);
+                setCheckIns(response || []);
             } catch (error) {
                 console.error("Ошибка при загрузке привычек:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -42,19 +38,43 @@ const DailyHabits = () => {
     };
 
     return (
-        <div>
-            <DateSelector onDateChange={setSelectedDate} />
-            <div className="habit-list">
-                {checkIns.map((check_in) => (
-                    <HabitTracker
-                        key={check_in.id}
-                        check_in={check_in}
-                        onCheckInChange={onCheckInChange}
-                    />
-                ))}
-            </div>
+        <div className="daily-habits">
+            <DateSelector
+                dates={getCurrentWeek()}
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+            />
+            {isLoading ? (
+                <div>Loading...</div>
+            ) : (
+                <div className="habit-list">
+                    {checkIns.length > 0 ? (
+                        checkIns.map((check_in) => (
+                            <HabitTracker
+                                key={check_in.id}
+                                check_in={check_in}
+                                onCheckInChange={onCheckInChange}
+                            />
+                        ))
+                    ) : (
+                        <div className="empty-state">No habits for this day.</div>
+                    )}
+                </div>
+            )}
         </div>
     );
+};
+
+const getCurrentWeek = () => {
+    const today = new Date();
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(startOfWeek);
+        date.setDate(startOfWeek.getDate() + i);
+        dates.push(date.toISOString().split("T")[0]); // Формат YYYY-MM-DD
+    }
+    return dates;
 };
 
 export default DailyHabits;

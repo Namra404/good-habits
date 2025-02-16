@@ -1,6 +1,10 @@
 import { api } from "@/lib/request.js";
 
 /**
+ * @typedef {"in_progress" | "completed"} HabitStatus
+ */
+
+/**
  * @typedef {Object} HabitCheckIn
  * @property {string} id - Уникальный идентификатор записи.
  * @property {string} title - Заголовок записи.
@@ -18,7 +22,7 @@ import { api } from "@/lib/request.js";
  * @property {string} start_date - Дата начала прогресса.
  * @property {string|null} last_check_in_date - Последняя дата проверки.
  * @property {number} checkin_amount_per_day - Количество записей в день.
- * @property {string} status - Статус прогресса ("in_progress", "completed" и т.д.).
+ * @property {HabitStatus} status - Статус прогресса.
  * @property {number} reward_coins - Количество вознаграждений в монетах.
  * @property {number} completed_days - Количество завершенных дней.
  * @property {HabitCheckIn[]} check_ins - Список записей прогресса.
@@ -51,6 +55,9 @@ class UserHabitService {
      * @returns {Promise<string>} Уникальный идентификатор созданной записи.
      */
     static async createHabitProgress(progress) {
+        if (!["in_progress", "completed"].includes(progress.status)) {
+            throw new Error(`Invalid status: ${progress.status}. Allowed values: ['in_progress', 'completed']`);
+        }
         const response = await api.post("/user_habit_progress/", progress);
         return response.data;
     }
@@ -62,6 +69,9 @@ class UserHabitService {
      * @returns {Promise<boolean>} True, если обновление успешно.
      */
     static async updateHabitProgress(progressId, progressData) {
+        if (progressData.status && !["in_progress", "completed"].includes(progressData.status)) {
+            throw new Error(`Invalid status: ${progressData.status}. Allowed values: ['in_progress', 'completed']`);
+        }
         const response = await api.put(`/user_habit_progress/${progressId}`, progressData);
         return response.data;
     }
@@ -80,10 +90,12 @@ class UserHabitService {
     /**
      * Получить все привычки пользователя.
      * @param {string} userId - Уникальный идентификатор пользователя.
+     * @param {HabitStatus} [status] - Фильтр по статусу (опционально).
      * @returns {Promise<UserHabitProgress[]>} Массив привычек пользователя.
      */
-    static async getAllUserHabits(userId) {
-        const response = await api.get(`/user_habit_progress/${userId}`);
+    static async getAllUserHabits(userId, status) {
+        const url = status ? `/user_habit_progress/${userId}?status=${status}` : `/user_habit_progress/${userId}`;
+        const response = await api.get(url);
         return response.data;
     }
 }

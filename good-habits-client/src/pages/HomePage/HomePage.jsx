@@ -5,19 +5,19 @@ import GoalHabitsList from "@/components/GoalHabitsList/GoalHabitsList.jsx";
 import "./HomePage.css";
 import UserHabitService from "@/services/UserHabit.jsx";
 import UserService from "@/services/User.jsx";
+import {useUser} from "@/store/user-provider.jsx";
 
 function HomePage() {
     const [habitsData, setHabitsData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-
+    const {user} = useUser();
     useEffect(() => {
         const fetchHabitsAndProgress = async () => {
             try {
                 // Получаем замоканный user_id
-                const userId = UserService.getMockedUserId();
 
                 // Один запрос для получения привычек и прогресса
-                const fetchedData = await UserHabitService.getAllUserHabits(userId);
+                const fetchedData = await UserHabitService.getAllUserHabits(user, "in_progress");
                 setHabitsData(fetchedData);
             } catch (error) {
                 console.error("Failed to fetch habits and progress:", error);

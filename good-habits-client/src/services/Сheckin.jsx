@@ -67,7 +67,7 @@ class CheckinService {
      * @returns {Promise<boolean>} True, если обновление успешно.
      */
     static async updateCheckIn(checkInId, checkInData) {
-        const response = await api.put(`/checkins/${checkInId}`, checkInData);
+        const response = await api.put(`/habit_checkin/${checkInId}`, checkInData);
         return response.data;
     }
 
@@ -82,12 +82,18 @@ class CheckinService {
     }
 
     /**
-     * Получить все чек-ины пользователя за сегодняшний день.
+     * Получить все чек-ины пользователя за сегодняшний день или указанную дату.
      * @param {string} userId - Уникальный идентификатор пользователя.
-     * @returns {Promise<HabitCheckIn[]>} Массив чек-инов пользователя за сегодня.
+     * @param {string} [date] - Дата в формате ISO 8601 (например, "2025-01-17").
+     *                          Если не указано, используется текущий день.
+     * @returns {Promise<HabitCheckIn[]>} Массив чек-инов пользователя за указанную дату.
      */
-    static async getTodayCheckIns(userId) {
-        const response = await api.get(`/habit_checkin/today/${userId}`);
+    static async getTodayCheckIns(userId, date = null) {
+        const url = date
+            ? `/habit_checkin/daily/${userId}?specific_date=${date}`
+            : `/habit_checkin/daily/${userId}`;
+
+        const response = await api.get(url);
         return response.data;
     }
 }
