@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime
-from http.client import HTTPException
+from fastapi import HTTPException
 from typing import Optional
 from uuid import UUID, uuid4
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from sqlalchemy.orm import joinedload
 
 from src.entity.habit_checkin import HabitCheckIn
-from src.entity.user_habit_progress import UserHabitProgress
+from src.entity.user_habit_progress import UserHabitProgress, HabitStatus
 from src.infra.exceptions.habit import HabitNotFound
 from src.infra.exceptions.user_habit import UserHabitIsAlreadyExist
 from src.infra.repositories.postgres.factories import PostgresSessionFactory
@@ -66,10 +66,7 @@ class PostgresUserHabitProgressRepository:
         await self.session.commit()
         return result.rowcount > 0
 
-    async def create_habit_progress(
-            self,
-            user_habit: UserHabitProgress
-    ) -> UUID:
+    async def create_habit_progress(self, user_habit: UserHabitProgress) -> UUID:
         # Проверка существования привычки
         habit = await self.habit_repository.get_habit_by_id(user_habit.habit_id)
         if not habit:
@@ -82,6 +79,13 @@ class PostgresUserHabitProgressRepository:
 
         duration_days = habit.duration_days
 
+        # Убеждаемся, что статус валидный (но это уже проверит Pydantic)
+        if user_habit.status not in HabitStatus:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid status: {user_habit.status}. Allowed values: {[s.value for s in HabitStatus]}"
+            )
+
         # Создание записи прогресса привычки
         progress_id = uuid4()
         progress_query = (
@@ -92,7 +96,7 @@ class PostgresUserHabitProgressRepository:
                 user_id=user_habit.user_id,
                 start_date=user_habit.start_date,
                 last_check_in_date=None,
-                status="in_progress",
+                status=user_habit.status.value,  # <-- Преобразуем Enum в строку
                 checkin_amount_per_day=user_habit.checkin_amount_per_day,
                 reward_coins=user_habit.reward_coins,
                 completed_days=0,
@@ -153,50 +157,43 @@ class PostgresUserHabitProgressRepository:
             "habit": habit_json
         }
 
-    async def get_all_user_habits(self, user_id: UUID) -> list[dict]:
+    async def get_all_user_habits(self, user_id: UUID, status: Optional[str] = None) -> list[dict]:
         """
         Получение всех привычек пользователя с их прогрессом.
+        Если передан статус, то фильтруем по нему.
         """
-        # Запрос на прогресс всех привычек пользователя
-        progress_query = (
-            select(UserHabitProgressModel)
-            .filter(UserHabitProgressModel.user_id == user_id)
-            .options(joinedload(UserHabitProgressModel.check_ins))  # Загружаем check-ins
-        )
+        query = select(UserHabitProgressModel).filter(UserHabitProgressModel.user_id == user_id)
 
-        # Выполняем запрос и проверяем результат
-        progress_results = await self.session.scalars(progress_query)
+        if status:
+            query = query.filter(UserHabitProgressModel.status == status)
+
+        query = query.options(joinedload(UserHabitProgressModel.check_ins))
+        progress_results = await self.session.scalars(query)
         progress_list = progress_results.unique().all()
 
         if not progress_list:
             raise HTTPException(
-                status_code=404, detail="No habits found for this user"
+                status_code=404,
+                detail=f"No habits found for user {user_id} with status '{status}'" if status else "No habits found for this user"
             )
 
-        # Получаем список habit_id для выборки связанных привычек
         habit_ids = [progress.habit_id for progress in progress_list]
 
-        # Запрос на привычки по списку habit_id
         habit_query = select(HabitModel).filter(HabitModel.id.in_(habit_ids))
         habit_results = await self.session.scalars(habit_query)
         habit_list = habit_results.all()
 
         if not habit_list:
             raise HTTPException(
-                status_code=404, detail="No habits found for this user"
+                status_code=404,
+                detail="No associated habits found for this user"
             )
 
-        # Преобразуем результаты в словари
         habits_dict = {habit.id: habit.to_entity().__dict__ for habit in habit_list}
 
-        # Формируем список ответов, соединяя прогресс с привычками
-        result = []
-        for progress in progress_list:
-            progress_json = progress.to_entity().__dict__
-            habit_json = habits_dict.get(progress.habit_id, None)
-            result.append({
-                "progress": progress_json,
-                "habit": habit_json
-            })
+        result = [
+            {"progress": progress.to_entity().__dict__, "habit": habits_dict.get(progress.habit_id)}
+            for progress in progress_list
+        ]
 
         return result

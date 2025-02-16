@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date
 from uuid import UUID
 
-from sqlalchemy import insert, update, delete, func
+from sqlalchemy import insert, update, delete, func, asc
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -84,6 +84,61 @@ class PostgresHabitCheckInRepository:
         await self.session.commit()
         return result.rowcount > 0
 
+    # async def update_check_in(self, check_in_id: UUID, check_in_data: dict) -> bool:
+    #     """Обновление данных чек-ина с проверкой прогресса."""
+    #     async with self.session.begin():
+    #         # Выполняем обновление чек-ина
+    #         query = (
+    #             update(HabitCheckInModel)
+    #             .where(HabitCheckInModel.id == check_in_id)
+    #             .values(**check_in_data)
+    #         )
+    #         result = await self.session.execute(query)
+    #
+    #         # Если обновление не затронуло строк, возвращаем False
+    #         if result.rowcount == 0:
+    #             return False
+    #
+    #         # Проверяем, если статус стал `is_completed = true`
+    #         if check_in_data.get("is_completed"):
+    #             # Получаем информацию о чек-ине и его дате
+    #             check_in_query = (
+    #                 select(HabitCheckInModel)
+    #                 .options(joinedload(HabitCheckInModel.progress))
+    #                 .where(HabitCheckInModel.id == check_in_id)
+    #             )
+    #             check_in = (await self.session.execute(check_in_query)).scalar_one_or_none()
+    #
+    #             if not check_in:
+    #                 return False
+    #
+    #             check_in_date = check_in.check_in_date
+    #             progress_id = check_in.progress_id
+    #
+    #             # Проверяем, есть ли на эту дату другие чек-ины с is_completed = false
+    #             remaining_check_ins_query = (
+    #                 select(func.count())
+    #                 .select_from(HabitCheckInModel)
+    #                 .where(
+    #                     HabitCheckInModel.progress_id == progress_id,
+    #                     HabitCheckInModel.check_in_date == check_in_date,
+    #                     HabitCheckInModel.is_completed == False
+    #                 )
+    #             )
+    #             remaining_check_ins = (await self.session.execute(remaining_check_ins_query)).scalar()
+    #
+    #             # Если таких чек-инов больше нет, обновляем completed_days
+    #             if remaining_check_ins == 0:
+    #                 progress_update_query = (
+    #                     update(UserHabitProgressModel)
+    #                     .where(UserHabitProgressModel.id == progress_id)
+    #                     .values(completed_days=UserHabitProgressModel.completed_days + 1)
+    #                 )
+    #                 await self.session.execute(progress_update_query)
+    #
+    #         await self.session.commit()
+    #         return True
+
     async def delete_check_in(self, check_in_id: UUID) -> bool:
         """Удаление чек-ина по ID."""
         query = delete(HabitCheckInModel).where(HabitCheckInModel.id == check_in_id)
@@ -101,6 +156,11 @@ class PostgresHabitCheckInRepository:
             .filter(
                 UserHabitProgressModel.user_id == user_id,
                 func.date(HabitCheckInModel.check_in_date) == target_date
+            )
+            .order_by(
+                HabitCheckInModel.check_in_date,
+                HabitCheckInModel.check_in_number,
+                asc(HabitCheckInModel.is_completed)
             )
         )
         result = await self.session.execute(query)

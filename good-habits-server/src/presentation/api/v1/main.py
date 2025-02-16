@@ -1,16 +1,16 @@
 from fastapi import FastAPI
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
-# from src.presentation.api.v1.routes import comics, reward_history, role, settings, user_comics, user_habit, user, \
-#     reminder, habit
-from src.presentation.api.v1.routes import user, comics, reward_history, habit, reminder, role, settings, user_comics, user_habit, habit_checkin
+
+from src.presentation.api.v1.routes import (user, comics, reward_history, habit, reminder, role, settings, user_comics,
+                                            user_habit, habit_checkin, validate)
 
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Замените на ваш фронтенд-URL
+    allow_origins=["*"],  # Замените на ваш фронтенд-URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -27,3 +27,4 @@ app.include_router(settings.router, prefix="/settings", tags=["Settings"])
 app.include_router(user_comics.router, prefix="/user_comics", tags=["User Comics"])
 app.include_router(user_habit.router, prefix="/user_habit_progress", tags=["User Habit"])
 app.include_router(habit_checkin.router, prefix="/habit_checkin", tags=["Habit Checkins"])
+app.include_router(validate.router, prefix="/validate", tags=["Validate"])

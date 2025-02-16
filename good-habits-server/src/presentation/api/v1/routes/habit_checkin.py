@@ -89,7 +89,7 @@ async def delete_check_in(
     return deleted
 
 
-@router.get("/today/{user_id}", response_model=list[HabitCheckIn])
+@router.get("/daily/{user_id}", response_model=list[HabitCheckIn])
 async def get_check_ins_by_date(
         user_id: UUID,
         repo: Annotated[PostgresHabitCheckInRepository, Depends(get_habit_checkin_repository)],

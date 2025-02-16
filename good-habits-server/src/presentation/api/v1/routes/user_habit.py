@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Annotated
 from uuid import UUID
 
@@ -67,9 +67,10 @@ async def get_user_habit_details(
 @router.get("/{user_id}", response_model=list[dict])
 async def get_all_user_habits(
         user_id: UUID,
-        repo: Annotated[PostgresUserHabitProgressRepository, Depends(get_user_habit_repository)]
+        repo: Annotated[PostgresUserHabitProgressRepository, Depends(get_user_habit_repository)],
+        status: str = Query(None, description="Фильтр по статусу привычки (например, 'completed')"),
 ):
-    habits = await repo.get_all_user_habits(user_id)
+    habits = await repo.get_all_user_habits(user_id, status)
     if not habits:
         raise HTTPException(status_code=404, detail="No habits found for this user")
     return habits
