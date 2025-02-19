@@ -60,3 +60,8 @@
     flex-direction: column;
     cursor: pointer;
 }
+.completed {
+    background: #ffcc80;
+    color: #e65100;
+    border: 1px solid #ff9800;
+}

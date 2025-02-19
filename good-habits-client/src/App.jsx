@@ -18,16 +18,10 @@ import UserProfile from "@/pages/UserProfile/UserProfile.jsx";
 import PurchasedComicsPage from "@/pages/PurchasedComicsPage/PurchasedComicsPage.jsx";
 import HabitHistory from "@/pages/HabitHistory/HabitHistory.jsx";
 import TelegramIntegration from "@/lib/TelegramIntegration.jsx";
+import {useUser} from "@/store/user-provider.jsx";
 
 
 const hideRoutes = ['/']
-const user = {
-    id: "123e4567-e89b-12d3-a456-426614174000",
-    tg_id: 123456789,
-    role_id: "987e6543-e21b-45f6-b789-426614174999",
-    username: "John Doe",
-    coin_balance: 120,
-};
 
 function App() {
     return (
@@ -136,7 +130,7 @@ function App() {
                     element={
                         <Layout>
                             <div className='page'>
-                                <UserProfile user={user} />
+                                <UserProfile/>
                             </div>
                         </Layout>
                     }

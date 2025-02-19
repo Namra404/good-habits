@@ -6,7 +6,7 @@ import {UserProvider} from "@/store/user-provider.jsx";
 function Layout({ children }) {
     return (
         <UserProvider>
-            <TelegramIntegration/>
+            {/*<TelegramIntegration/>*/}
             {children}
             <Footer />
         </UserProvider>

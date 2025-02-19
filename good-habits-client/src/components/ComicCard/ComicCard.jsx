@@ -8,9 +8,9 @@ const ComicCard = ({ comic, onBuy }) => {
             <h2 className="comic-title">{title}</h2>
             <p className="comic-description">{description}</p>
             <div className="comic-footer">
-                <span className="comic-price">{price} coins</span>
+                <span className="comic-price">{price} монеты</span>
                 <button className="buy-button" onClick={onBuy}>
-                    Buy
+                    Купить
                 </button>
             </div>
         </div>

@@ -1,8 +1,11 @@
 import React from "react";
 import "./GoalHabitsList.css";
 import GoalHabitProgressCard from "@/components/GoalHabitProgressCard/GoalHabitProgressCard.jsx";
+import {useNavigate} from "react-router-dom";
 
 const GoalHabitsList = ({ habitsData }) => {
+    const navigate = useNavigate(); // Хук для навигации
+
     if (!habitsData || habitsData.length === 0) {
         return <div>No goals to display.</div>;
     }
@@ -11,7 +14,9 @@ const GoalHabitsList = ({ habitsData }) => {
         <div className="habit-list-container">
             <div className="habit-list-header">
                 <h2 className="habit-list-title">Your Goals</h2>
-                <button className="habit-list-see-all">See all</button>
+                <button className="habit-list-see-all" onClick={() => navigate("/progress")}>
+                    See all
+                </button>
             </div>
             <div className="habit-list-cards">
                 {habitsData.map(({ habit, progress }) => (

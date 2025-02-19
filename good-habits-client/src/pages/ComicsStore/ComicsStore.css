@@ -1,16 +1,23 @@
-/* Общий стиль магазина */
+/* Основной контейнер магазина */
 .comics-store {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
+    font-family: "Inter", sans-serif;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
+    background-color: #fff;
 }
 
+/* Шапка магазина */
 .store-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    background: linear-gradient(135deg, #ff6d00, #ff9800);
+    padding: 16px;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .store-header h1 {
@@ -18,16 +25,20 @@
     font-size: 24px;
 }
 
+/* Баланс монет */
 .coins-display {
     font-size: 18px;
-    background-color: #f4f4f4;
+    background: rgba(255, 255, 255, 0.2);
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-weight: bold;
 }
 
 /* Список комиксов */
 .comics-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
+    justify-content: center;
+    padding: 10px;
 }

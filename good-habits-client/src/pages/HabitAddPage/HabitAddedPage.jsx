@@ -12,11 +12,11 @@ function HabitAddedPage() {
     return (
         <div className="homepage page">
             <img src={noteSvg} alt="Note" />
-            <h1>Done!</h1>
+            <h1>Готово!</h1>
             <div>
-                New Habit Goal has added
+                С этого момента вы начнете менять свою жизнь
                 <br />
-                Let’s do the best to achieve your goal!
+                Давайте сделаем все возможное для достижения вашей цели!
             </div>
             <Button text="OK" onClick={handleClick} />
         </div>

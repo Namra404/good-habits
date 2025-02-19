@@ -41,6 +41,17 @@ class UserService {
     }
 
     /**
+     * Получить пользователя по Telegram ID.
+     * @param {number} tgId - Telegram ID пользователя.
+     * @returns {Promise<User>} Данные пользователя.
+     */
+    static async getUserByTgId(tgId) {
+        const response = await api.get(`/users/tg/${tgId}`);
+        return response.data;
+    }
+
+
+    /**
      * Создать нового пользователя.
      * @param {User} user - Данные нового пользователя.
      * @returns {Promise<string>} Уникальный идентификатор созданного пользователя.

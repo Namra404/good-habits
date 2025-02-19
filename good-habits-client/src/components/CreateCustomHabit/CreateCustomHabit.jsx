@@ -3,7 +3,8 @@ import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx"; // В�
 import "./CreateCustomHabit.css";
 import crossSVG from "@/assets/cross.svg";
 import {api} from "@/lib/request.js";
-import {useNavigate} from "react-router-dom"; // Стили компонента
+import {useNavigate} from "react-router-dom";
+import {useUser} from "@/store/user-provider.jsx"; // Стили компонента
 
 const CreateCustomHabit = () => {
     const navigate = useNavigate();
@@ -11,7 +12,9 @@ const CreateCustomHabit = () => {
     const [description, setDescription] = useState(""); // Описание привычки
     const [duration, setDuration] = useState(1); // Длительность привычки (в днях)
     const [goal, setGoal] = useState(""); // Цель привычки
-    const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка для user_id
+    // const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка для user_id
+    const {user} = useUser();
+    const userId = user?.id; // Заглушка для user_id
 
     const handleSubmit = async (e) => {
         e.preventDefault();

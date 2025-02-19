@@ -6,10 +6,13 @@ import {api} from "@/lib/request.js";
 import {useNavigate} from "react-router-dom";
 import UserHabitService from "@/services/UserHabit.jsx";
 import HabitService from "@/services/Habit.jsx";
-import log from "eslint-plugin-react/lib/util/log.js"; // Стили компонента
+import log from "eslint-plugin-react/lib/util/log.js";
+import {useUser} from "@/store/user-provider.jsx"; // Стили компонента
 
 const DefaultHabits = () => {
-    const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка для user_id
+    // const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка для user_id
+    const {user} = useUser();
+    const userId = user?.id; // Заглушка для user_id
     const navigate = useNavigate();
     // Замоканные дефолтные привычки
     const defaultHabits = [
@@ -62,7 +65,7 @@ const DefaultHabits = () => {
                 start_date: currentDate,
                 last_check_in_date: currentDate,
                 checkin_amount_per_day: 2,
-                status: "start",
+                status: "in_progress",
                 reward_coins: 1,
                 completed_days: 0,
                 check_ins: [],

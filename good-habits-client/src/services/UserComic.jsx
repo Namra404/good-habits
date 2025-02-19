@@ -28,6 +28,38 @@ class UserComicService {
         const response = await api.post("/user_comics/", userComic);
         return response.data;
     }
+
+    /**
+     * Отправить пользователю ссылку на комикс через Telegram-бота.
+     * @param {string} userId - ID пользователя.
+     * @param {string} comicId - ID комикса.
+     * @returns {Promise<string>} Сообщение об отправке.
+     */
+    static async sendComicToUser(userId, comicId) {
+        const response = await api.post("/user_comics/send_comic", {}, {
+            headers: {
+                "user-id": userId,  // 🔹 Исправлено (user_id → user-id)
+                "comic-id": comicId  // 🔹 Исправлено (comic_id → comic-id)
+            }
+        });
+        return response.data;
+    }
+
+    /**
+     * Проверить, купил ли пользователь определённый комикс.
+     * @param {string} userId - ID пользователя.
+     * @param {string} comicId - ID комикса.
+     * @returns {Promise<boolean>} Возвращает `true`, если пользователь купил комикс.
+     */
+    static async userOwnsComic(userId, comicId) {
+        const response = await api.get("/user_comics/user/comic/owns", {
+            headers: {
+                "user_id": userId,
+                "comic_id": comicId
+            }
+        });
+        return response.data;
+    }
 }
 
 export default UserComicService;

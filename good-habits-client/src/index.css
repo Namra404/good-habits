@@ -6,10 +6,15 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+
 }
 
 .page{
   min-height:100vh;
   margin: 0 auto;
   padding-bottom: 60px;
+  background-color: #EDEDED;
+}
+html,body {
+  min-height: 100dvh;
 }

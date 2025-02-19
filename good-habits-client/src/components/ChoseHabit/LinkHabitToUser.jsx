@@ -4,7 +4,9 @@ import "./LinkHabitToUser.css";
 import {api} from "@/lib/request.js";
 import {useNavigate} from "react-router-dom";
 import crossSVG from "@/assets/cross.svg";
-import HabitService from "@/services/Habit.jsx"; // Стили компонента
+import HabitService from "@/services/Habit.jsx";
+import {useUser} from "@/store/user-provider.jsx";
+import UserHabitService from "@/services/UserHabit.jsx"; // Стили компонента
 const LinkHabitToUser = () => {
     const navigate = useNavigate();
 
@@ -14,7 +16,9 @@ const LinkHabitToUser = () => {
     const [checkinAmount, setCheckinAmount] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка для user_id
+    const {user} = useUser();
+    const userId = user?.id; // Заглушка для user_id
+    // const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка для user_id
 
     useEffect(() => {
         const fetchHabits = async () => {
@@ -41,7 +45,7 @@ const LinkHabitToUser = () => {
             start_date: new Date(startDate).toISOString(),
             last_check_in_date: new Date(startDate).toISOString(),
             checkin_amount_per_day: checkinAmount,
-            status: "start",
+            status: "in_progress",
             reward_coins: 1,
             completed_days: 0,
             check_ins: [],
@@ -50,8 +54,8 @@ const LinkHabitToUser = () => {
         console.log("Отправляем данные:", payload);
 
         try {
-            const response = await api.post("/user_habit_progress/", payload);
-            console.log("Ответ сервера:", response.data);
+            const response = await UserHabitService.createHabitProgress(payload); // ✅ Используем сервис
+            console.log("Ответ сервера:", response);
             navigate("/success");
         } catch (error) {
             console.error("Ошибка при отправке данных:", error);
@@ -63,32 +67,34 @@ const LinkHabitToUser = () => {
 
     return (
         <div className="form-container">
-            <h1 className="form-title">Create New Habit Goal</h1>
+            <h1 className="form-title">Начните развивать привычку</h1>
             <form onSubmit={handleSubmit} className="habit-form">
-                <label className="form-label">Select Habit</label>
+                <label className="form-label">Выберите цель</label>
                 <select
                     className="form-select"
                     value={habitId}
-                    onChange={(e) => setHabitId(e.target.value)}
+                    onChange={(e) => {
+                        const selectedValue = e.target.value;
+                        if (selectedValue === "create-new") {
+                            navigate("/custom-habit");
+                        } else {
+                            setHabitId(selectedValue);
+                        }
+                    }}
                     required
                 >
                     <option value="" disabled>
-                        Select a habit
+                        Выбрите привычку
                     </option>
                     {habits.map((habit) => (
                         <option key={habit.id} value={habit.id}>
                             {habit.title}
                         </option>
                     ))}
-                    <option value="" onClick={(e) => {
-                        e.stopPropagation();
-                        navigate("/custom-habit");
-                    }} className="create-new">
-                        + Create new
-                    </option>
+                    <option value="create-new" className="create-new">+ Создать свою</option>
                 </select>
 
-                <label className="form-label">Start Date</label>
+                <label className="form-label">Дата старта</label>
                 <input
                     className="form-input"
                     type="date"
@@ -97,7 +103,7 @@ const LinkHabitToUser = () => {
                     required
                 />
 
-                <label className="form-label">Check-ins per Day</label>
+                <label className="form-label">Чек-инов в день</label>
                 <input
                     className="form-input"
                     type="number"
@@ -108,7 +114,7 @@ const LinkHabitToUser = () => {
                     required
                 />
 
-                <Button text="Create New" type="submit" color="orange" />
+                <Button text="Создать" type="submit" color="orange"/>
             </form>
         </div>
     );

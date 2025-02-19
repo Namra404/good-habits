@@ -3,10 +3,13 @@ import React from "react";
 import "./UserProfile.css";
 import Button from "@/components/UI-kit/buttons/BigButton/BigButton.jsx";
 import {useNavigate} from "react-router-dom";
+import {useUser} from "@/store/user-provider.jsx";
 
 
-const UserProfile = ({ user }) => {
+const UserProfile = () => {
     const navigate = useNavigate();
+    const {user} = useUser();
+
 
     const handleOpenSettings = () => {
         navigate("/settings");
@@ -17,7 +20,7 @@ const UserProfile = ({ user }) => {
     };
 
     const handleViewHabitHistory = () => {
-        alert("Habit history page is under development.");
+        navigate('/habit-history');
     };
 
     const handleGoToStore = () => {
@@ -27,32 +30,46 @@ const UserProfile = ({ user }) => {
     return (
         <div className="user-profile">
             <div className="profile-header">
-                <div className="avatar"></div>
+                <div className="avatar">
+                    {user?.avatar_url ? (
+                        <img
+                            src={user.avatar_url}
+                            alt="User Avatar"
+                            className="user_avatar"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                                e.target.src = "/default-avatar.png"; // Заглушка, если изображение не загрузилось
+                            }}
+                        />
+                    ) : (
+                        <img src="/default-avatar.png" alt="Default Avatar" className="user_avatar"/>
+                    )}
+                </div>
                 <div>
-                    <h1 className="username">{user.username || "User"}</h1>
+                    <h1 className="username">{user?.username || "User"}</h1>
                     <div className="coin-balance">
-                        Coin Balance: <span>{user.coin_balance}</span>
+                        Баланс: <span>{user?.coin_balance}</span>
                     </div>
                 </div>
             </div>
             <div className="profile-actions">
                 <Button
-                    text="Purchased Comics"
+                    text="Купленные комиксы"
                     onClick={handleViewPurchasedComics}
                     color="orange"
                 />
                 <Button
-                    text="Habit History"
+                    text="История привычек"
                     onClick={handleViewHabitHistory}
                     color="grey"
                 />
                 <Button
-                    text="Open Settings"
+                    text="Настройки"
                     onClick={handleOpenSettings}
                     color="orange"
                 />
                 <Button
-                    text="Go to Comics Store"
+                    text="Магазин"
                     onClick={handleGoToStore}
                     color="blue"
                 />

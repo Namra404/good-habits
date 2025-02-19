@@ -3,9 +3,13 @@ import axios from 'axios';
 import HabitGoalProgress from '@/components/HabitProgress/HabitGoalProgress.jsx';
 import './GoalsDashboard.css';
 import UserHabitService from "@/services/UserHabit.jsx";
+import {useUser} from "@/store/user-provider.jsx";
+import AddHabitButton from "@/components/UI-kit/buttons/AddHabitButton/AddHabitButton.jsx";
 
 const GoalsDashboard = () => {
-    const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+    // const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+    const {user} = useUser();
+    const userId = user?.id; // Заглушка для user_id
     const [habits, setHabits] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -35,6 +39,13 @@ const GoalsDashboard = () => {
 
     if (loading) return <div>Загрузка...</div>;
     if (error) return <div className="error">{error}</div>;
+
+    if (!habits.length) {
+        return <div className="empty-message">
+            У вас пока нет привычек. Создайте ее!
+            <AddHabitButton />
+        </div>;
+    }
 
     return (
         <div className="goals-dashboard">
@@ -91,7 +102,7 @@ const HabitCard = ({ habitData, calculateProgress }) => {
     const progressPercentage = calculateProgress(progress.completed_days, habit.duration_days);
 
     return (
-        <div className="habit-card">
+        <div className="goal-card">
             <div className="habit-progress-circle">
                 <svg width="50" height="50" viewBox="0 0 50 50">
                     <circle

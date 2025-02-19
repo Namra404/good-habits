@@ -4,17 +4,18 @@ import {api} from "@/lib/request.js";
 import { useState, useEffect } from "react"
 import CheckinService from "@/services/Сheckin.jsx";
 import "./DailyHabits.css";
+import {useUser} from "@/store/user-provider.jsx";
 
 const DailyHabits = () => {
     const [selectedDate, setSelectedDate] = useState(getCurrentWeek()[0]); // Начало недели
     const [checkIns, setCheckIns] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
+    const {user} = useUser();
+    const userId = user?.id;
     useEffect(() => {
         const loadHabits = async () => {
             setIsLoading(true);
             try {
-                const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Заглушка userId
                 const response = await CheckinService.getTodayCheckIns(userId, selectedDate);
                 setCheckIns(response || []);
             } catch (error) {

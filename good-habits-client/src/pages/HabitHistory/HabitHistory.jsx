@@ -3,10 +3,12 @@ import { useParams } from "react-router-dom";
 import "./HabitHistory.css";
 import UserService from "@/services/User.jsx";
 import UserHabitService from "@/services/UserHabit.jsx";
+import {useUser} from "@/store/user-provider.jsx";
 
 
 const HabitHistory = () => {
-    const userId = UserService.getMockedUserId();
+    const {user} = useUser();
+    const userId = user?.id;
     const [habitHistory, setHabitHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -63,14 +65,14 @@ const HabitHistory = () => {
             {habitHistory.length === 0 ? (
                 <p className="no-data">No completed habits found.</p>
             ) : (
-                <ul className="habit-list">
+                <ul className="history-habit-list">
                     {habitHistory.map(({ progress, habit }) => (
-                        <li key={progress.id} className="habit-item">
-                            <h2 onClick={() => toggleHabitDetails(habit.id)} className="habit-title">
+                        <li key={progress.id} className="history-habit-item">
+                            <h2 onClick={() => toggleHabitDetails(habit.id)} className="history-habit-title">
                                 {habit.title} {expandedHabits[habit.id] ? "▲" : "▼"}
                             </h2>
                             {expandedHabits[habit.id] && (
-                                <div className="habit-details">
+                                <div className="history-habit-details">
                                     <p><strong>Description:</strong> {habit.description}</p>
                                     <p><strong>Goal:</strong> {habit.goal}</p>
                                     <p><strong>Duration:</strong> {habit.duration_days} days</p>
@@ -82,9 +84,9 @@ const HabitHistory = () => {
                                 Check-ins {expandedCheckIns[progress.id] ? "▲" : "▼"}
                             </h3>
                             {expandedCheckIns[progress.id] && (
-                                <ul className="check-in-list">
+                                <ul className="history-check-in-list">
                                     {progress.check_ins.slice(0, visibleCheckIns[progress.id] || checkInsPerPage).map((checkIn) => (
-                                        <li key={checkIn.id} className={`check-in-item ${checkIn.is_completed ? "completed" : "not-completed"}`}>
+                                        <li key={checkIn.id} className={`history-check-in-item ${checkIn.is_completed ? "history-completed" : "history-not-completed"}`}>
                                             <p className="check-in-date">{new Date(checkIn.check_in_date).toLocaleDateString()}</p>
                                             <p className="check-in-number">Check-in: {checkIn.check_in_number}</p>
                                             <p className="check-in-status">{checkIn.is_completed ? "✅ Completed" : "❌ Not Completed"}</p>
