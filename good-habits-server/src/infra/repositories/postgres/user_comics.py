@@ -18,11 +18,10 @@ from src.infra.repositories.postgres.models.user_comics import UserComicModel
 class PostgresUserComicRepository:
     session: AsyncSession
 
-    async def get_user_comics(self, user_id: UUID) -> list[dict[str, Any]]:
+    async def get_user_comics(self, user_id: UUID) -> List[dict[str, Any]]:
         """
         Получение комиксов пользователя с информацией о самих комиксах.
         """
-        # JOIN таблиц user_comics и comics
         query = (
             select(
                 UserComicModel.id.label("user_comic_id"),
@@ -38,7 +37,6 @@ class PostgresUserComicRepository:
         )
         result = await self.session.execute(query)
 
-        # Возвращаем результат как список словарей
         return [
             {
                 "user_comic_id": row.user_comic_id,
@@ -54,6 +52,7 @@ class PostgresUserComicRepository:
 
     async def add_user_comic(self, user_comic: UserComic) -> UUID:
         """Добавление нового комикса пользователю с проверкой баланса и проверкой покупки."""
+
         # Получаем данные пользователя
         user_query = select(UserModel).where(UserModel.id == user_comic.user_id)
         user = (await self.session.execute(user_query)).scalar_one_or_none()
@@ -69,12 +68,10 @@ class PostgresUserComicRepository:
             raise HTTPException(status_code=404, detail="Comic not found")
 
         # Проверяем, куплен ли уже комикс
-        purchase_query = (
-            select(exists().where(
-                UserComicModel.user_id == user_comic.user_id,
-                UserComicModel.comic_id == user_comic.comic_id
-            ))
-        )
+        purchase_query = select(exists().where(
+            (UserComicModel.user_id == user_comic.user_id) &
+            (UserComicModel.comic_id == user_comic.comic_id)
+        ))
         is_already_purchased = (await self.session.execute(purchase_query)).scalar()
 
         if is_already_purchased:
@@ -93,7 +90,6 @@ class PostgresUserComicRepository:
 
         # Обновляем баланс пользователя
         user.coin_balance -= comic.price
-        await self.session.commit()  # Сохраняем изменения баланса
 
         # Добавляем комикс пользователю
         query = (
@@ -107,5 +103,16 @@ class PostgresUserComicRepository:
             .returning(UserComicModel.id)
         )
         user_comic_id = await self.session.scalar(query)
-        await self.session.commit()  # Сохранение изменений
+
+        await self.session.commit()
+
         return user_comic_id
+
+    async def user_owns_comic(self, user_id: UUID, comic_id: UUID) -> bool:
+        """Проверяет, купил ли пользователь этот комикс."""
+        query = select(UserComicModel).filter(
+            UserComicModel.user_id == user_id,
+            UserComicModel.comic_id == comic_id
+        )
+        result = await self.session.scalar(query)
+        return result is not None

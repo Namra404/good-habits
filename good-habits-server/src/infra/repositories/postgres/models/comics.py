@@ -12,11 +12,13 @@ class ComicModel(Base):
     title: Mapped[str]
     description: Mapped[str]
     price: Mapped[float]
+    file_url: Mapped[str]
 
     def to_entity(self) -> Comic:
         return Comic(
             id=self.id,
             title=self.title,
             description=self.description,
-            price=self.price
+            price=self.price,
+            file_url=self.file_url
         )

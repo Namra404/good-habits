@@ -77,3 +77,20 @@ async def update_user(
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
     return updated_user
+
+
+@router.get("/tg/{tg_id}", response_model=User)
+async def get_user_by_tg_id(
+        tg_id: str,
+        repo: Annotated[PostgresUserRepository, Depends(get_user_repository)]
+):
+    try:
+        tg_id = int(tg_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid tg_id format")
+
+    user = await repo.get_user_by_tg_id(tg_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User with this tg_id not found")
+
+    return user

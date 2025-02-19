@@ -9,14 +9,15 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message
 from dotenv import load_dotenv
 
+from src.entity.user import User
+from src.infra.repositories.postgres.factories import PostgresSessionFactory
+from src.infra.repositories.postgres.user import PostgresUserRepository
 from src.presentation.api.v1.main import app
+from src.presentation.bot.bot_instance import bot, dp
 from src.presentation.bot.config_reader import config
 from src.presentation.bot.keyboards.startup_button import markup
 
 load_dotenv()
-
-bot = Bot(token=os.getenv("BOT_TOKEN"))
-dp = Dispatcher()
 
 
 @asynccontextmanager
@@ -43,8 +44,31 @@ async def webhook(request: Request) -> None:
 
 @dp.message(CommandStart())
 async def welcome(message: Message) -> None:
-    await message.answer("Hello World!", reply_markup=markup)
+    async with PostgresSessionFactory().get_session() as session:
+        user_repo = PostgresUserRepository(session)
+        user_id = message.from_user.id
 
+        # Получаем фото профиля пользователя
+        user_photos = await message.bot.get_user_profile_photos(user_id)
+
+        # Проверяем, есть ли фото у пользователя
+        avatar_url = None
+        if user_photos.total_count > 0:
+            file_id = user_photos.photos[0][-1].file_id  # Берём самое большое фото
+            file_info = await message.bot.get_file(file_id)
+            avatar_url = f"https://api.telegram.org/file/bot{message.bot.token}/{file_info.file_path}"
+
+        # Создаем пользователя, если его нет
+        await user_repo.create(User(
+            tg_id=user_id,
+            username=message.from_user.username,
+            avatar_url=avatar_url
+        ))
+
+        await message.answer(
+            f"Привет, {message.from_user.full_name}! 🎉",
+            reply_markup=markup
+        )
 
 async def main():
     await dp.start_polling(bot)

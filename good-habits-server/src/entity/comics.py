@@ -8,3 +8,4 @@ class Comic:
     title: str
     description: str
     price: float
+    file_url: str

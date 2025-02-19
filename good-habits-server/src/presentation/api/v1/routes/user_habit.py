@@ -71,6 +71,7 @@ async def get_all_user_habits(
         status: str = Query(None, description="Фильтр по статусу привычки (например, 'completed')"),
 ):
     habits = await repo.get_all_user_habits(user_id, status)
-    if not habits:
-        raise HTTPException(status_code=404, detail="No habits found for this user")
-    return habits
+    return habits if habits else []
+    # if not habits:
+    #     raise HTTPException(status_code=404, detail="No habits found for this user")
+    # return habits

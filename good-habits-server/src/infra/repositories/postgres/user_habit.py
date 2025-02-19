@@ -171,11 +171,12 @@ class PostgresUserHabitProgressRepository:
         progress_results = await self.session.scalars(query)
         progress_list = progress_results.unique().all()
 
+        # if not progress_list:
+        #     raise HTTPException(
+        #         status_code=404,
+        #         detail=f"No habits found for user {user_id} with status '{status}'" if status else "No habits found for this user")
         if not progress_list:
-            raise HTTPException(
-                status_code=404,
-                detail=f"No habits found for user {user_id} with status '{status}'" if status else "No habits found for this user"
-            )
+            return []
 
         habit_ids = [progress.habit_id for progress in progress_list]
 
@@ -183,11 +184,13 @@ class PostgresUserHabitProgressRepository:
         habit_results = await self.session.scalars(habit_query)
         habit_list = habit_results.all()
 
+        # if not habit_list:
+        #     raise HTTPException(
+        #         status_code=404,
+        #         detail="No associated habits found for this user"
+        #     )
         if not habit_list:
-            raise HTTPException(
-                status_code=404,
-                detail="No associated habits found for this user"
-            )
+            return []
 
         habits_dict = {habit.id: habit.to_entity().__dict__ for habit in habit_list}
 

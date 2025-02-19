@@ -1,3 +1,4 @@
+import uuid
 from uuid import UUID
 
 from src.entity.settings import Settings
@@ -10,7 +11,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class SettingsModel(CreatedUpdatedMixin, Base):
     __tablename__ = 'settings'
-    id: Mapped[UUID] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'))
     timezone: Mapped[str]
     language: Mapped[str]

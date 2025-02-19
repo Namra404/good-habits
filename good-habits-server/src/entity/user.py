@@ -9,6 +9,7 @@ from src.entity.base import BaseEntity
 class User(BaseEntity):
     id: UUID = field(default_factory=uuid4)
     tg_id: int
-    role_id: UUID
+    role_id: UUID | None = None
     username: Optional[str] = None
     coin_balance: int = 0
+    avatar_url: Optional[str] = None

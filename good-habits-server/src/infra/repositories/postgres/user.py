@@ -2,12 +2,16 @@ from dataclasses import dataclass
 from uuid import UUID
 from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.basic import BasicRoles
+from src.entity.settings import Settings
 from src.entity.user import User
 from src.infra.base_repositories.user import BaseUserRepository
 from src.infra.repositories.postgres.factories import PostgresSessionFactory
 from src.infra.repositories.postgres.models.user import UserModel
+from src.infra.repositories.postgres.settings import PostgresSettingsRepository
 
 
 @dataclass
@@ -27,21 +31,49 @@ class PostgresUserRepository(BaseUserRepository):
         return UserModel.to_entity(result) if result else None
 
     async def create(self, user: User) -> UUID:
-        """Создание нового пользователя."""
+        """Создание нового пользователя, если его еще нет."""
+
+        # Проверяем, существует ли пользователь с таким tg_id
+        existing_user = await self.get_user_by_tg_id(user.tg_id)
+        if existing_user:
+            return existing_user.id  # Если пользователь уже есть, возвращаем его ID
+
+        role_id = user.role_id if user.role_id else BasicRoles.USER.value
+
+        # Если пользователя нет, создаем нового
         query = (
             insert(UserModel)
             .values(
-                id=user.id,
                 tg_id=user.tg_id,
-                role_id=user.role_id,
+                role_id=role_id,
                 username=user.username,
-                coin_balance=user.coin_balance,
+                coin_balance=0,
+                avatar_url=user.avatar_url,
             )
             .returning(UserModel.id)
         )
-        user_id = await self.session.scalar(query)
-        await self.session.commit()  # Сохранение изменений
-        return user_id
+
+        try:
+            user_id = await self.session.scalar(query)
+            await self.session.commit()  # Сохранение изменений
+
+            # **Создание настроек для пользователя**
+            settings_repo = PostgresSettingsRepository(self.session)
+            new_settings = Settings(
+                user_id=user_id,
+                timezone="UTC",  # Дефолтный часовой пояс
+                language="ru",  # Дефолтный язык
+            )
+            await settings_repo.create_settings(new_settings)
+
+            return user_id
+
+        except IntegrityError:  # Обработка параллельных регистраций
+            await self.session.rollback()
+            existing_user = await self.get_user_by_tg_id(user.tg_id)
+            return existing_user.id if existing_user else None
+
+
 
     async def is_username_exists(self, username: str) -> bool:
         """Проверка существования имени пользователя."""
@@ -74,3 +106,9 @@ class PostgresUserRepository(BaseUserRepository):
         result = await self.session.execute(query)
         await self.session.commit()
         return result.rowcount > 0
+
+    async def get_user_by_tg_id(self, tg_id: int) -> User | None:
+        """Получение пользователя по tg_id."""
+        query = select(UserModel).filter_by(tg_id=tg_id)
+        result = await self.session.scalar(query)
+        return UserModel.to_entity(result) if result else None
