@@ -16,6 +16,8 @@ from src.presentation.api.v1.main import app
 from src.presentation.bot.bot_instance import bot, dp
 from src.presentation.bot.config_reader import config
 from src.presentation.bot.keyboards.startup_button import markup
+from src.presentation.notification_service.scheduler import schedule_notifications
+from src.presentation.notification_service.sender import send_notifications
 
 load_dotenv()
 
@@ -52,11 +54,9 @@ async def welcome(message: Message) -> None:
         user_photos = await message.bot.get_user_profile_photos(user_id)
 
         # Проверяем, есть ли фото у пользователя
-        avatar_url = None
-        if user_photos.total_count > 0:
-            file_id = user_photos.photos[0][-1].file_id  # Берём самое большое фото
-            file_info = await message.bot.get_file(file_id)
-            avatar_url = f"https://api.telegram.org/file/bot{message.bot.token}/{file_info.file_path}"
+        file_id = user_photos.photos[0][-1].file_id  # Берём самое большое фото
+        file_info = await message.bot.get_file(file_id)
+        avatar_url = f"https://api.telegram.org/file/bot{message.bot.token}/{file_info.file_path}"
 
         # Создаем пользователя, если его нет
         await user_repo.create(User(
@@ -70,8 +70,15 @@ async def welcome(message: Message) -> None:
             reply_markup=markup
         )
 
+
 async def main():
-    await dp.start_polling(bot)
+
+    await asyncio.gather(
+        schedule_notifications(),
+        send_notifications(),
+        dp.start_polling(bot)
+    )
+
 
 
 if __name__ == '__main__':

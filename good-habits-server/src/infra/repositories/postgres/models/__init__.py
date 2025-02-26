@@ -1,3 +1,4 @@
+from .notification_model import NotificationModel
 from .settings import SettingsModel
 from .comics import ComicModel
 from .user import UserModel

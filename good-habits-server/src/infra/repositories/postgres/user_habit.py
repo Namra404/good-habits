@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 from fastapi import HTTPException
 from typing import Optional
 from uuid import UUID, uuid4
@@ -107,19 +107,53 @@ class PostgresUserHabitProgressRepository:
         # Фиксация изменений в прогрессе
         await self.session.commit()
 
-        # Генерация чек-инов
+        # check_ins = []
+        # daily_times = [timedelta(hours=9), timedelta(hours=14), timedelta(hours=19)]  # 9:00, 14:00, 19:00
+        # for day in range(duration_days):
+        #     day_date = user_habit.start_date + timedelta(days=day)
+        #     for check_in_number in range(1, min(user_habit.checkin_amount_per_day, len(daily_times)) + 1):
+        #         check_in_time = day_date + daily_times[check_in_number - 1]
+        #         check_in = HabitCheckIn(
+        #             title=habit.title,
+        #             progress_id=progress_id,
+        #             check_in_date=check_in_time.replace(tzinfo=timezone.utc),
+        #             check_in_number=check_in_number,
+        #             is_completed=False,
+        #         )
+        #         check_ins.append(check_in)
+
         check_ins = []
+        start_hour = 9  # Начало временного промежутка
+        end_hour = 21  # Конец временного промежутка
+        hours_in_period = end_hour - start_hour  # 12 часов
+
         for day in range(duration_days):
-            day_date = user_habit.start_date + timedelta(days=day)
-            for check_in_number in range(1, user_habit.checkin_amount_per_day + 1):
-                check_in = HabitCheckIn(
+            # Начало дня (00:00 UTC)
+            day_start = (user_habit.start_date + timedelta(days=day)).replace(hour=0, minute=0, second=0, microsecond=0)
+
+            if user_habit.checkin_amount_per_day == 1:
+                # Один чек-ин — ставим в середину дня (15:00)
+                check_in_time = day_start + timedelta(hours=15)
+                check_ins.append(HabitCheckIn(
                     title=habit.title,
                     progress_id=progress_id,
-                    check_in_date=day_date,
-                    check_in_number=check_in_number,
+                    check_in_date=check_in_time.replace(tzinfo=timezone.utc),
+                    check_in_number=1,
                     is_completed=False,
-                )
-                check_ins.append(check_in)
+                ))
+            else:
+                # Рассчитываем интервал между чек-инами
+                interval_hours = hours_in_period / (user_habit.checkin_amount_per_day - 1)
+                for check_in_number in range(1, user_habit.checkin_amount_per_day + 1):
+                    offset_hours = (check_in_number - 1) * interval_hours
+                    check_in_time = day_start + timedelta(hours=start_hour + offset_hours)
+                    check_ins.append(HabitCheckIn(
+                        title=habit.title,
+                        progress_id=progress_id,
+                        check_in_date=check_in_time.replace(tzinfo=timezone.utc),
+                        check_in_number=check_in_number,
+                        is_completed=False,
+                    ))
 
         # Создание чек-инов через репозиторий
         await self.habit_check_in_repository.create_bulk_check_ins(check_ins)
