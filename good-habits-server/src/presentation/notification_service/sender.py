@@ -62,7 +62,3 @@ async def send_notifications():
                 print(f"Ошибка отправки в Telegram для {tg_id}: {e}")
 
         await asyncio.sleep(10)  # Проверяем каждые 10 секунд
-
-
-# if __name__ == "__main__":
-#     asyncio.run(send_notifications())
