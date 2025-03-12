@@ -58,12 +58,22 @@ async def welcome(message: Message) -> None:
         file_info = await message.bot.get_file(file_id)
         avatar_url = f"https://api.telegram.org/file/bot{message.bot.token}/{file_info.file_path}"
 
-        # Создаем пользователя, если его нет
-        await user_repo.create(User(
-            tg_id=user_id,
-            username=message.from_user.username,
-            avatar_url=avatar_url
-        ))
+        existing_user = await user_repo.get_user_by_tg_id(user_id)  # Предполагается, что такой метод есть
+
+        if existing_user:
+            # Если пользователь существует, обновляем его аватар
+            if avatar_url:  # Обновляем только если есть новое фото
+                user_data = {
+                    "avatar_url": avatar_url
+                }
+                await user_repo.update(existing_user.id, user_data)
+        else:
+            # Создаем нового пользователя, если его нет
+            await user_repo.create(User(
+                tg_id=user_id,
+                username=message.from_user.username,
+                avatar_url=avatar_url
+            ))
 
         await message.answer(
             f"Привет, {message.from_user.full_name}! 🎉",

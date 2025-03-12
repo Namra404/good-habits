@@ -23,6 +23,31 @@ async def send_notification_to_user(session: AsyncSession, user_id: UUID, messag
     return user.tg_id, message  # Возвращаем данные для отправки вне транзакции
 
 
+async def send_congratulatory_message(session: AsyncSession, user_id: UUID, progress_id: UUID):
+    """Отправка поздравительного сообщения с картинкой."""
+    try:
+        # Получаем Telegram ID пользователя
+        user_repo = PostgresUserRepository(session)
+        tg_id, _ = await send_notification_to_user(session, user_id,
+                                                   "")  # Пустое сообщение, т.к. используем только tg_id
+
+        # Поздравительное сообщение
+        message = "🎉 Поздравляем! Вы завершили все чек-ины за сегодня! Отличная работа! 🚀"
+
+        # URL картинки (можно заменить на свою)
+        photo_url = "https://ir.ozone.ru/s3/multimedia-c/c1000/6064898436.jpg"
+
+        # Отправляем сообщение с картинкой
+        await bot.send_photo(
+            chat_id=tg_id,
+            photo=photo_url,
+            caption=message,
+            parse_mode="Markdown"
+        )
+    except Exception as e:
+        print(f"Ошибка отправки поздравительного сообщения: {e}")
+
+
 async def send_notifications():
     while True:
         notifications_to_send = []
@@ -61,4 +86,4 @@ async def send_notifications():
             except Exception as e:
                 print(f"Ошибка отправки в Telegram для {tg_id}: {e}")
 
-        await asyncio.sleep(10)  # Проверяем каждые 10 секунд
+        await asyncio.sleep(300)  # Проверяем каждые 100 секунд
