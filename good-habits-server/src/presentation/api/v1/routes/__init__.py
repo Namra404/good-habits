@@ -1,0 +1,11 @@
+from .user import router as user
+from .comics import router as comics
+from .reward_history import router as reward_history
+from .habit import router as habit
+from .reminder import router as reminder
+from .role import router as role
+from .settings import router as settings
+from .user_comics import router as user_comics
+from .user_habit import router as user_habit
+from .habit_checkin import router as habit_checkin
+from .validate import router as validate

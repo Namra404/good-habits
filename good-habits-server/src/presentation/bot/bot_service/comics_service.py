@@ -28,18 +28,18 @@ class ComicsService:
         if not comic:
             return "Комикс не найден"
 
-        # Получаем данные о пользователе
+
         user = await self.user_repo.get_user_by_id(user_id)
         if not user:
             return "Пользователь не найден"
 
-        # Формируем сообщение
+
         message_text = (
             f"📖 *Ваш комикс*: {comic.title}\n"
             f"🔗 [Скачать комикс]({comic.file_url})"
         )
 
-        # Отправляем сообщение пользователю через бота
+
         await bot.send_message(chat_id=user.tg_id, text=message_text, parse_mode="Markdown")
 
         return "Комикс успешно отправлен"

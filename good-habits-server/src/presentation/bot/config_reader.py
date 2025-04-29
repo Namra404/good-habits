@@ -4,10 +4,10 @@ from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Config(BaseSettings): #ХЗ использовать или нет
+class Config(BaseSettings):
     BOT_TOKEN: SecretStr
 
-    WEB_APP_URL: str = 'https://3e1c-138-124-182-3.ngrok-free.app'
+    WEB_APP_URL: str = 'https://1d55-138-124-182-3.ngrok-free.app'
 
     WEBHOOK_URL: str = ''
     WEBHOOK_PATH: str = '/webhook'
