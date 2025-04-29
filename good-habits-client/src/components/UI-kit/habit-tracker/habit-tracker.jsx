@@ -6,6 +6,7 @@ import {useRef, useState} from "react";
 import useClickOutside from "@/hooks/useClickOutside.jsx";
 import DeleteUserHabitPage from "@/pages/DeleteUserHabitPage/DeleteUserHabitPage.jsx";
 import CheckinService from "@/services/Сheckin.jsx";
+import EditUserHabitPage from "@/pages/EditUserHabitPage/EditUserHabitPage.jsx";
 
 
 
@@ -16,6 +17,7 @@ function HabitTracker({ check_in, onCheckInChange, setCheckIns, previousComplete
 
     const [isOpen, setIsOpen] = useState(false);
     const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
+    const [isEditModalOpened, setIsEditModalOpened] = useState(false);
     const menuRef = useRef(null);
 
     const { id, title, is_completed, check_in_number } = check_in;
@@ -74,7 +76,7 @@ function HabitTracker({ check_in, onCheckInChange, setCheckIns, previousComplete
 
             {isOpen && (
                 <div className="menuRef" ref={menuRef}>
-                    <div>Edit</div>
+                    <div onClick={() => setIsEditModalOpened(true)}>Edit</div>
                     <div onClick={() => setIsDeleteModalOpened(true)}>Delete</div>
                 </div>
             )}
@@ -84,6 +86,17 @@ function HabitTracker({ check_in, onCheckInChange, setCheckIns, previousComplete
                     id={id}
                     onClose={() => setIsDeleteModalOpened(false)}
                     setCheckIns={setCheckIns}
+                />
+            )}
+            {isEditModalOpened && (
+                <EditUserHabitPage
+                    onClose={() => setIsEditModalOpened(false)}
+                    initialCheckInDate={check_in.check_in_date}
+                    isCompleted={is_completed}
+                    checkInId={id}
+                    onSuccess={() => {
+                        onCheckInChange(id, is_completed); // просто для перерендера
+                    }}
                 />
             )}
         </div>
