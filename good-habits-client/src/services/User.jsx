@@ -21,6 +21,10 @@ class UserService {
         return this.mockedUserId;
     }
 
+    static async isAdmin(userId) {
+        const response = await api.get(`/admin/is-admin/${userId}`);
+        return response.data;
+    }
     /**
      * Получить всех пользователей.
      * @returns {Promise<User[]>} Массив пользователей.

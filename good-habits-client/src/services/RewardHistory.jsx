@@ -10,12 +10,12 @@ import { api } from "@/lib/request.js";
 
 class RewardHistoryService {
     static async getHistoryByUserId(userId) {
-        const response = await api.get(`/reward-history/user/${userId}`);
+        const response = await api.get(`/rewards_history/user/${userId}`);
         return response.data;
     }
 
     static async createHistoryEntry(historyEntry) {
-        const response = await api.post("/reward-history/", historyEntry);
+        const response = await api.post("/rewards_history/", historyEntry);
         return response.data;
     }
 }

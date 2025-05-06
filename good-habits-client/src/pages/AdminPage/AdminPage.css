@@ -1,0 +1,233 @@
+/* Базовые стили для панели */
+.admin-panel {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
+.admin-panel h1 {
+    color: #1e3a8a;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.admin-tabs button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #e0e7ff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1e40af;
+}
+
+.admin-tabs button:hover {
+    background-color: #c7d2fe;
+}
+
+.admin-tabs button.active {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.admin-content {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-table th {
+    background-color: #eff6ff;
+    font-weight: 600;
+    color: #1e3a8a;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.admin-table tr:hover {
+    background-color: #f3f4f6;
+}
+
+.admin-table a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.admin-table a:hover {
+    text-decoration: underline;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #64748b;
+    font-size: 1.2rem;
+}
+
+.error-container {
+    background-color: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    color: #dc2626;
+}
+
+.error-container h2 {
+    margin-top: 0;
+    color: #dc2626;
+    font-size: 1.5rem;
+}
+
+.error-container pre {
+    background-color: #fef2f2;
+    padding: 10px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+/* Стили для форм */
+form input,
+form select {
+    transition: all 0.3s ease;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .admin-panel {
+        padding: 10px;
+    }
+
+    .admin-panel h1 {
+        font-size: 1.5rem;
+    }
+
+    .admin-tabs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-tabs button {
+        width: 100%;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+    }
+
+    .admin-content {
+        padding: 10px;
+    }
+
+    .admin-table {
+        font-size: 0.85rem;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 8px;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .admin-table thead {
+        display: none; /* Скрываем заголовки таблицы на мобильных */
+    }
+
+    .admin-table tbody tr {
+        margin-bottom: 10px;
+        border-bottom: 2px solid #e5e7eb;
+        display: block;
+    }
+
+    .admin-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+    }
+
+    .admin-table td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #1e3a8a;
+        width: 40%;
+    }
+
+    .admin-table td:last-child {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-start;
+    }
+
+    .admin-table td:last-child:before {
+        display: none;
+    }
+
+    .admin-table button {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    .grid-cols-3,
+    .grid-cols-4 {
+        grid-template-columns: 1fr !important;
+    }
+
+    form input,
+    form select {
+        font-size: 0.9rem;
+    }
+
+    form button {
+        width: 100%;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-panel h1 {
+        font-size: 1.25rem;
+    }
+
+    .admin-table {
+        font-size: 0.8rem;
+    }
+
+    .admin-table button {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+}

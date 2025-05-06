@@ -19,6 +19,7 @@ import PurchasedComicsPage from "@/pages/PurchasedComicsPage/PurchasedComicsPage
 import HabitHistory from "@/pages/HabitHistory/HabitHistory.jsx";
 import TelegramIntegration from "@/lib/TelegramIntegration.jsx";
 import {useUser} from "@/store/user-provider.jsx";
+import AdminPage from "@/pages/AdminPage/AdminPage.jsx";
 
 
 const hideRoutes = ['/']
@@ -152,6 +153,16 @@ function App() {
                         <Layout>
                             <div className='page'>
                                 <HabitHistory/>
+                            </div>
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/admin"
+                    element={
+                        <Layout>
+                            <div className='page'>
+                                <AdminPage/>
                             </div>
                         </Layout>
                     }
