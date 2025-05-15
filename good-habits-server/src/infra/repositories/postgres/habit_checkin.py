@@ -1,8 +1,9 @@
+import logging
 from dataclasses import dataclass
 from datetime import date, timedelta, datetime, timezone
 from uuid import UUID
 
-from sqlalchemy import insert, update, delete, func, asc
+from sqlalchemy import insert, update, delete, func, asc, cast, Date
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -12,7 +13,8 @@ from src.entity.habit_checkin import HabitCheckIn
 from src.infra.repositories.postgres.models import UserHabitProgressModel, NotificationModel
 from src.infra.repositories.postgres.models.habit_checkin import HabitCheckInModel
 from src.presentation.notification_service.sender import send_congratulatory_message
-
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 @dataclass
 class PostgresHabitCheckInRepository:
@@ -79,64 +81,89 @@ class PostgresHabitCheckInRepository:
 
     # async def update_check_in(self, check_in_id: UUID, check_in_data: dict) -> bool:
     #     """Обновление данных чек-ина с проверкой прогресса и отправкой уведомления."""
-    #     async with self.session.begin():
-    #         # Выполняем обновление чек-ина
-    #         query = (
-    #             update(HabitCheckInModel)
-    #             .where(HabitCheckInModel.id == check_in_id)
-    #             .values(**check_in_data)
-    #         )
-    #         result = await self.session.execute(query)
     #
-    #         # Если обновление не затронуло строк, возвращаем False
-    #         if result.rowcount == 0:
+    #     if "check_in_date" in check_in_data and isinstance(check_in_data["check_in_date"], str):
+    #         check_in_data["check_in_date"] = make_naive(check_in_data["check_in_date"])
+    #
+    #     async with self.session.begin():
+    #         updated_checkin = await self._update_checkin(check_in_id=check_in_id, check_in_data=check_in_data)
+    #
+    #         if updated_checkin == 0:
     #             return False
     #
-    #         # Проверяем, если статус стал `is_completed = true`
     #         if check_in_data.get("is_completed"):
-    #             # Получаем информацию о чек-ине и его дате
-    #             check_in_query = (
-    #                 select(HabitCheckInModel)
-    #                 .options(joinedload(HabitCheckInModel.progress))
-    #                 .where(HabitCheckInModel.id == check_in_id)
-    #             )
-    #             check_in = (await self.session.execute(check_in_query)).scalar_one_or_none()
+    #             await self._update_checkin_status(check_in_id=check_in_id)
     #
-    #             if not check_in:
-    #                 return False
+    #         if check_in_data.get("check_in_date"):
+    #             if check_in_data.get("check_in_date"):
+    #                 await self._update_checkin_time(check_in_id, check_in_data["check_in_date"])
+    #     return True
     #
-    #             check_in_date = check_in.check_in_date
-    #             progress_id = check_in.progress_id
-    #             user_id = check_in.progress.user_id  # Получаем user_id из прогресса
+    # async def _update_checkin_time(self, check_in_id: UUID, new_check_in_date: datetime) -> bool:
+    #     check_in_query = (
+    #         select(NotificationModel)
+    #         .where(NotificationModel.check_in_id == check_in_id)
+    #     )
+    #     result = await self.session.scalar(check_in_query)
+    #     if result is None:
+    #         return False
     #
-    #             # Проверяем, есть ли на эту дату другие чек-ины с is_completed = false
-    #             remaining_check_ins_query = (
-    #                 select(func.count())
-    #                 .select_from(HabitCheckInModel)
-    #                 .where(
-    #                     HabitCheckInModel.progress_id == progress_id,
-    #                     func.date(HabitCheckInModel.check_in_date) == check_in_date.date(),
-    #                     HabitCheckInModel.is_completed == False
-    #                 )
-    #             )
-    #             remaining_check_ins = (await self.session.execute(remaining_check_ins_query)).scalar()
+    #     query = (
+    #         update(NotificationModel)
+    #         .where(NotificationModel.check_in_id == check_in_id)
+    #         .values(send_time=new_check_in_date - timedelta(hours=1))
+    #     )
+    #     await self.session.execute(query)
     #
-    #             # Если таких чек-инов больше нет
-    #             if remaining_check_ins == 0:
-    #                 # Обновляем completed_days
-    #                 progress_update_query = (
-    #                     update(UserHabitProgressModel)
-    #                     .where(UserHabitProgressModel.id == progress_id)
-    #                     .values(completed_days=UserHabitProgressModel.completed_days + 1)
-    #                 )
-    #                 await self.session.execute(progress_update_query)
+    # async def _update_checkin_status(self, check_in_id: UUID) -> bool:
     #
-    #                 # Отправляем уведомление с картинкой
-    #                 await send_congratulatory_message(self.session, user_id, progress_id)
+    #     # Получаем информацию о чек-ине и его дате
+    #     check_in_query = (
+    #         select(HabitCheckInModel)
+    #         .options(joinedload(HabitCheckInModel.progress))
+    #         .where(HabitCheckInModel.id == check_in_id)
+    #     )
+    #     check_in = (await self.session.execute(check_in_query)).scalar_one_or_none()
     #
-    #         await self.session.commit()
-    #         return True
-
+    #     if not check_in:
+    #         return False
+    #
+    #     check_in_date = check_in.check_in_date
+    #     progress_id = check_in.progress_id
+    #     user_id = check_in.progress.user_id  # Получаем user_id из прогресса
+    #
+    #     # Проверяем, есть ли на эту дату другие чек-ины с is_completed = false
+    #     remaining_check_ins_query = (
+    #         select(func.count())
+    #         .select_from(HabitCheckInModel)
+    #         .where(
+    #             HabitCheckInModel.progress_id == progress_id,
+    #             func.date(HabitCheckInModel.check_in_date) == check_in_date.date(),
+    #             HabitCheckInModel.is_completed == False
+    #         )
+    #     )
+    #     remaining_check_ins = (await self.session.execute(remaining_check_ins_query)).scalar()
+    #
+    #     # Если таких чек-инов больше нет
+    #     if remaining_check_ins == 0:
+    #         # Обновляем completed_days
+    #         progress_update_query = (
+    #             update(UserHabitProgressModel)
+    #             .where(UserHabitProgressModel.id == progress_id)
+    #             .values(completed_days=UserHabitProgressModel.completed_days + 1)
+    #         )
+    #         await self.session.execute(progress_update_query)
+    #
+    #         # Отправляем уведомление с картинкой
+    #         await send_congratulatory_message(self.session, user_id, progress_id)
+    #
+    # async def _update_checkin(self, check_in_id: UUID, check_in_data: dict):
+    #     query = (
+    #         update(HabitCheckInModel)
+    #         .where(HabitCheckInModel.id == check_in_id)
+    #         .values(**check_in_data)
+    #     )
+    #     return await self.session.execute(query)
     async def update_check_in(self, check_in_id: UUID, check_in_data: dict) -> bool:
         """Обновление данных чек-ина с проверкой прогресса и отправкой уведомления."""
 
@@ -153,9 +180,18 @@ class PostgresHabitCheckInRepository:
                 await self._update_checkin_status(check_in_id=check_in_id)
 
             if check_in_data.get("check_in_date"):
-                if check_in_data.get("check_in_date"):
-                    await self._update_checkin_time(check_in_id, check_in_data["check_in_date"])
+                await self._update_checkin_time(check_in_id, check_in_data["check_in_date"])
+
         return True
+
+    async def _update_checkin(self, check_in_id: UUID, check_in_data: dict):
+        query = (
+            update(HabitCheckInModel)
+            .where(HabitCheckInModel.id == check_in_id)
+            .values(**check_in_data)
+        )
+        result = await self.session.execute(query)
+        return result.rowcount
 
     async def _update_checkin_time(self, check_in_id: UUID, new_check_in_date: datetime) -> bool:
         check_in_query = (
@@ -166,45 +202,46 @@ class PostgresHabitCheckInRepository:
         if result is None:
             return False
 
+        send_time = new_check_in_date - timedelta(hours=1)
         query = (
             update(NotificationModel)
             .where(NotificationModel.check_in_id == check_in_id)
-            .values(send_time=new_check_in_date - timedelta(hours=1))
+            .values(send_time=send_time)
         )
         await self.session.execute(query)
+        return True
 
     async def _update_checkin_status(self, check_in_id: UUID) -> bool:
-
-        # Получаем информацию о чек-ине и его дате
         check_in_query = (
             select(HabitCheckInModel)
             .options(joinedload(HabitCheckInModel.progress))
             .where(HabitCheckInModel.id == check_in_id)
         )
         check_in = (await self.session.execute(check_in_query)).scalar_one_or_none()
-
         if not check_in:
             return False
 
         check_in_date = check_in.check_in_date
         progress_id = check_in.progress_id
-        user_id = check_in.progress.user_id  # Получаем user_id из прогресса
+        user_id = check_in.progress.user_id
 
-        # Проверяем, есть ли на эту дату другие чек-ины с is_completed = false
-        remaining_check_ins_query = (
-            select(func.count())
-            .select_from(HabitCheckInModel)
+        # Используем UTC-aware дату
+        start_dt = datetime.combine(check_in_date.date(), datetime.min.time(), tzinfo=timezone.utc)
+        end_dt = start_dt + timedelta(days=1)
+
+        remaining_checkins_query = (
+            select(HabitCheckInModel)
             .where(
                 HabitCheckInModel.progress_id == progress_id,
-                func.date(HabitCheckInModel.check_in_date) == check_in_date.date(),
-                HabitCheckInModel.is_completed == False
+                HabitCheckInModel.check_in_date >= start_dt,
+                HabitCheckInModel.check_in_date < end_dt,
+                HabitCheckInModel.is_completed == False,
+                HabitCheckInModel.id != check_in.id
             )
         )
-        remaining_check_ins = (await self.session.execute(remaining_check_ins_query)).scalar()
+        remaining_checkins = (await self.session.scalars(remaining_checkins_query)).all()
 
-        # Если таких чек-инов больше нет
-        if remaining_check_ins == 0:
-            # Обновляем completed_days
+        if not remaining_checkins:
             progress_update_query = (
                 update(UserHabitProgressModel)
                 .where(UserHabitProgressModel.id == progress_id)
@@ -212,16 +249,21 @@ class PostgresHabitCheckInRepository:
             )
             await self.session.execute(progress_update_query)
 
-            # Отправляем уведомление с картинкой
             await send_congratulatory_message(self.session, user_id, progress_id)
 
+        return True
+
     async def _update_checkin(self, check_in_id: UUID, check_in_data: dict):
+        logger.info(f"_update_checkin: check_in_id={check_in_id}, check_in_data={check_in_data}")
         query = (
             update(HabitCheckInModel)
             .where(HabitCheckInModel.id == check_in_id)
             .values(**check_in_data)
         )
-        return await self.session.execute(query)
+        result = await self.session.execute(query)
+        rowcount = result.rowcount
+        logger.info(f"Чек-ин обновлён, затронуто строк: {rowcount}")
+        return rowcount
 
     async def delete_check_in(self, check_in_id: UUID) -> bool:
         """Удаление чек-ина по ID."""

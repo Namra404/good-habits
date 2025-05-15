@@ -1,24 +1,22 @@
 import asyncio
-import os
 import logging
 from contextlib import asynccontextmanager
-
+from uuid import UUID
 from fastapi import FastAPI, Request
-from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from dotenv import load_dotenv
 
+from core.basic import BasicRoles
 from src.entity.user import User
 from src.infra.repositories.postgres.factories import PostgresSessionFactory
 from src.infra.repositories.postgres.user import PostgresUserRepository
 from src.presentation.api.v1.main import app
 from src.presentation.bot.bot_instance import bot, dp
 from src.presentation.bot.config_reader import config
-from src.presentation.bot.keyboards.startup_button import markup
+from src.presentation.bot.keyboards.startup_button import markup, admin_markup
 from src.presentation.notification_service.scheduler import schedule_notifications
 from src.presentation.notification_service.sender import send_notifications
-
 load_dotenv()
 
 
@@ -43,13 +41,12 @@ async def webhook(request: Request) -> None:
     await dp.feed_update(bot, update)
     logging.info("Update processed")
 
-
 @dp.message(CommandStart())
 async def welcome(message: Message) -> None:
     async with PostgresSessionFactory().get_session() as session:
         user_repo = PostgresUserRepository(session)
         user_id = message.from_user.id
-
+        logging.info(user_id)
         # Получаем фото профиля пользователя
         user_photos = await message.bot.get_user_profile_photos(user_id)
 
@@ -62,12 +59,14 @@ async def welcome(message: Message) -> None:
 
         if existing_user:
             # Если пользователь существует, обновляем его аватар
+            logging.info(" существуе")
             if avatar_url:  # Обновляем только если есть новое фото
                 user_data = {
                     "avatar_url": avatar_url
                 }
                 await user_repo.update(existing_user.id, user_data)
         else:
+            logging.info("yt существуе")
             # Создаем нового пользователя, если его нет
             await user_repo.create(User(
                 tg_id=user_id,
@@ -76,10 +75,17 @@ async def welcome(message: Message) -> None:
             ))
 
         await message.answer(
-            f"Привет, {message.from_user.full_name}! 🎉",
-            reply_markup=markup
+            f"👋 Привет, {message.from_user.full_name}!\n\n"
+            f"Рад тебя видеть в *Хэббит Хоттабыче*! 🧞‍♂️✨\n"
+            f"Здесь ты сможешь развивать полезные привычки и получать награды 🪙 за свою настойчивость.\n\n"
+            f"Нажимай и начнем"
+            f"! 👇",
+            reply_markup=markup,
+            parse_mode="Markdown"
         )
-
+        user = await user_repo.get_user_by_tg_id(user_id)
+        if user.role_id == UUID(BasicRoles.ADMIN.value):
+            await message.answer('Вы админ', reply_markup=admin_markup, parse_mode='HTML')
 
 async def main():
 
@@ -88,8 +94,6 @@ async def main():
         send_notifications(),
         dp.start_polling(bot)
     )
-
-
 
 if __name__ == '__main__':
     try:

@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
+
+from fastapi import HTTPException
 from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
@@ -73,8 +75,6 @@ class PostgresUserRepository(BaseUserRepository):
             existing_user = await self.get_user_by_tg_id(user.tg_id)
             return existing_user.id if existing_user else None
 
-
-
     async def is_username_exists(self, username: str) -> bool:
         """Проверка существования имени пользователя."""
         query = select(UserModel.id).filter_by(username=username)
@@ -112,3 +112,14 @@ class PostgresUserRepository(BaseUserRepository):
         query = select(UserModel).filter_by(tg_id=tg_id)
         result = await self.session.scalar(query)
         return UserModel.to_entity(result) if result else None
+
+    async def is_user_admin(self, tg_id: str) -> bool:
+        """Проверка, является ли пользователь администратором по tg_id."""
+        try:
+            tg_id = int(tg_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid tg_id format {tg_id}")
+        user = await self.get_user_by_tg_id(tg_id)
+        if user is None:
+            return False
+        return str(user.role_id) == BasicRoles.ADMIN.value

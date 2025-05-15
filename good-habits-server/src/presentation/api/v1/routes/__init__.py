@@ -9,3 +9,4 @@ from .user_comics import router as user_comics
 from .user_habit import router as user_habit
 from .habit_checkin import router as habit_checkin
 from .validate import router as validate
+from .admin import router as admin

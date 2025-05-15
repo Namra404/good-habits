@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 567dd621f49c
+Revision ID: 81e1c524f00e
 Revises: 
-Create Date: 2024-11-11 17:48:59.025610
+Create Date: 2025-05-13 21:06:54.432651
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '567dd621f49c'
+revision: str = '81e1c524f00e'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,6 +25,7 @@ def upgrade() -> None:
     sa.Column('title', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=False),
     sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('file_url', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('roles',
@@ -33,11 +34,12 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
-    sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('tg_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('tg_id', sa.BigInteger(), nullable=False),
     sa.Column('role_id', sa.Uuid(), nullable=False),
     sa.Column('username', sa.String(), nullable=True),
     sa.Column('coin_balance', sa.Integer(), nullable=False),
+    sa.Column('avatar_url', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ),
@@ -46,7 +48,7 @@ def upgrade() -> None:
     )
     op.create_table('habits',
     sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('user_id', sa.Uuid(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=False),
     sa.Column('duration_days', sa.Integer(), nullable=False),
@@ -58,15 +60,15 @@ def upgrade() -> None:
     )
     op.create_table('rewards_history',
     sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('user_id', sa.Uuid(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('coins_changes', sa.Integer(), nullable=False),
-    sa.Column('reward_date', sa.DateTime(), nullable=False),
+    sa.Column('reward_date', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('settings',
     sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('user_id', sa.Uuid(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('timezone', sa.String(), nullable=False),
     sa.Column('language', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
@@ -76,9 +78,9 @@ def upgrade() -> None:
     )
     op.create_table('user_comics',
     sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('user_id', sa.Uuid(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('comic_id', sa.Uuid(), nullable=False),
-    sa.Column('purchase_date', sa.DateTime(), nullable=False),
+    sa.Column('purchase_date', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['comic_id'], ['comics.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -86,13 +88,13 @@ def upgrade() -> None:
     op.create_table('reminders',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('habit_id', sa.Uuid(), nullable=False),
-    sa.Column('user_id', sa.Uuid(), nullable=False),
-    sa.Column('reminder_time', sa.DateTime(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
+    sa.Column('reminder_time', sa.DateTime(timezone=True), nullable=False),
     sa.Column('frequency', sa.Integer(), nullable=False),
-    sa.Column('deadline_time', sa.DateTime(), nullable=False),
+    sa.Column('deadline_time', sa.DateTime(timezone=True), nullable=False),
     sa.Column('notification_text', sa.String(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
-    sa.Column('last_reminder_date', sa.DateTime(), nullable=False),
+    sa.Column('last_reminder_date', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['habit_id'], ['habits.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -100,20 +102,49 @@ def upgrade() -> None:
     op.create_table('user_habit_progress',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('habit_id', sa.Uuid(), nullable=False),
-    sa.Column('user_id', sa.Uuid(), nullable=False),
-    sa.Column('start_date', sa.DateTime(), nullable=False),
-    sa.Column('check_in_date', sa.DateTime(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
+    sa.Column('start_date', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('last_check_in_date', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('checkin_amount_per_day', sa.Integer(), nullable=False),
     sa.Column('status', sa.String(), nullable=False),
     sa.Column('reward_coins', sa.Integer(), nullable=False),
+    sa.Column('completed_days', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['habit_id'], ['habits.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('habit_check_ins',
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('title', sa.String(), nullable=False),
+    sa.Column('progress_id', sa.Uuid(), nullable=False),
+    sa.Column('check_in_date', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('check_in_number', sa.Integer(), nullable=False),
+    sa.Column('is_completed', sa.Boolean(), nullable=False),
+    sa.ForeignKeyConstraint(['progress_id'], ['user_habit_progress.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('notifications',
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
+    sa.Column('habit_progress_id', sa.Uuid(), nullable=False),
+    sa.Column('check_in_id', sa.Uuid(), nullable=True),
+    sa.Column('send_time', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('status', sa.String(length=20), nullable=False),
+    sa.Column('message', sa.String(), nullable=False),
+    sa.Column('image_path', sa.String(), nullable=True),
+    sa.ForeignKeyConstraint(['check_in_id'], ['habit_check_ins.id'], ),
+    sa.ForeignKeyConstraint(['habit_progress_id'], ['user_habit_progress.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('check_in_id')
     )
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('notifications')
+    op.drop_table('habit_check_ins')
     op.drop_table('user_habit_progress')
     op.drop_table('reminders')
     op.drop_table('user_comics')

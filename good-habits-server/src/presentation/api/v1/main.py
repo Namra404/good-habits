@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 from presentation.api.v1.routes import (user, comics, reward_history, habit, reminder, role, settings, user_comics,
-                                            user_habit, habit_checkin, validate)
+                                        user_habit, habit_checkin, validate, admin)
 
 
 app = FastAPI()
@@ -27,4 +27,5 @@ app.include_router(settings, prefix="/settings", tags=["Settings"])
 app.include_router(user_comics, prefix="/user_comics", tags=["User Comics"])
 app.include_router(user_habit, prefix="/user_habit_progress", tags=["User Habit"])
 app.include_router(habit_checkin, prefix="/habit_checkin", tags=["Habit Checkins"])
+app.include_router(admin, prefix="/admin", tags=["Admin Panel"])
 # app.include_router(validate.router, prefix="/validate", tags=["Validate"])

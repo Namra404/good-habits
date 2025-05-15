@@ -71,3 +71,39 @@
 #         statsd.incr(stat=f'reminders.{reminder_type.value}.sent', count=len(results) - len(failed))
 #         statsd.incr(stat=f'reminders.{reminder_type.value}.failed', count=len(failed))
 #         await asyncio.sleep(1)
+import hmac
+import hashlib
+
+bot_token = '7668126732:AAFbK4w1x8zhdr8BDvYaGXduxdIfVOGlSes'
+
+init_data = "query_id=AAEWam0aAAAAABZqbRoSGF7j&user=%7B%22id%22%3A443378198%2C%22first_name%22%3A%22%C2%A9%EF%B8%8F%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22BigC0ck%22%2C%22language_code%22%3A%22ru%22%2C%22is_premium%22%3Atrue%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FhCI_dCJ-FADsY7bh_bww2c10npqqAkhwi4ex8KCHG4g.svg%22%7D&auth_date=1746449807&signature=txoW4JtxJmv7xcWBmMyLJDEa4nl15rb4sbGSVOkmWnl0KFRHcx6jMG26gRV7stLxIkvcs_D60iI03l6Yj3eJDA&hash=60ea3f5036e062c7dca77e4cc253f8372451453e4efb872691bf7509756ecae6"
+
+def check_telegram_auth(init_data: str, token: str) -> bool:
+    params = {}
+    for param in init_data.split("&"):
+        if "=" in param:
+            key, value = param.split("=", 1)
+            params[key] = value
+
+    received_hash = params.pop("hash", None)
+    params.pop("signature", None)
+
+    if not received_hash:
+        print("❌ Hash not found")
+        return False
+
+    sorted_items = sorted(params.items())
+    data_check_string = "\n".join(f"{k}={v}" for k, v in sorted_items)
+
+    # ✅ ПРАВИЛЬНЫЙ способ создания secret_key
+    secret_key = hashlib.sha256(token.encode()).digest()
+
+    computed_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
+
+    print("✅ data_check_string:\n", data_check_string)
+    print("🔐 computed_hash:", computed_hash)
+    print("📦 received_hash:", received_hash)
+    print("✅ MATCH:", computed_hash == received_hash)
+    return computed_hash == received_hash
+
+check_telegram_auth(init_data, bot_token)
