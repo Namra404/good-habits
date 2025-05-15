@@ -7,9 +7,8 @@ import {useUser} from "@/store/user-provider.jsx";
 import AddHabitButton from "@/components/UI-kit/buttons/AddHabitButton/AddHabitButton.jsx";
 
 const GoalsDashboard = () => {
-    // const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
     const {user} = useUser();
-    const userId = user?.id; // Заглушка для user_id
+    const userId = user?.id;
     const [habits, setHabits] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -50,7 +49,7 @@ const GoalsDashboard = () => {
     return (
         <div className="goals-dashboard">
             <div className="goals-summary">
-                <h2 className="goals-title">Your Goals</h2>
+                <h2 className="goals-title">Ваши цели</h2>
                 <div className="goals-circle">
                     <svg width="120" height="120" viewBox="0 0 120 120">
                         <circle
@@ -75,10 +74,10 @@ const GoalsDashboard = () => {
                     </div>
                 </div>
                 <p className="goals-achieved">
-                    ✔ {achievedGoals.length} Habits goal has achieved
+                    ✔ {achievedGoals.length} Цель привычки достигнута
                 </p>
                 <p className="goals-not-achieved">
-                    ✖ {unachievedGoals.length} Habits goal hasn’t achieved
+                    ✖ {unachievedGoals.length} Цель привычки не достигнута
                 </p>
             </div>
             <div className="habit-list">
@@ -130,13 +129,13 @@ const HabitCard = ({ habitData, calculateProgress }) => {
                 <h3 className="habit-title">{habit.title}</h3>
                 <p className="habit-status">
                     {progress.status === "achieved" ? (
-                        <span className="status-achieved">Achieved</span>
+                        <span className="status-achieved">Достигнута</span>
                     ) : (
-                        <span className="status-unachieved">Unachieved</span>
+                        <span className="status-unachieved">Не достигнута</span>
                     )}
                 </p>
                 <p className="habit-details">
-                    {progress.completed_days} from {habit.duration_days} target
+                    {progress.completed_days} из {habit.duration_days} дней
                 </p>
             </div>
         </div>

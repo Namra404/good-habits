@@ -6,7 +6,6 @@ import {api} from "@/lib/request.js";
 import {useNavigate} from "react-router-dom";
 import UserHabitService from "@/services/UserHabit.jsx";
 import HabitService from "@/services/Habit.jsx";
-import log from "eslint-plugin-react/lib/util/log.js";
 import {useUser} from "@/store/user-provider.jsx"; // Стили компонента
 
 const DefaultHabits = () => {
@@ -64,7 +63,7 @@ const DefaultHabits = () => {
                 user_id: userId,
                 start_date: currentDate,
                 last_check_in_date: currentDate,
-                checkin_amount_per_day: 2,
+                checkin_amount_per_day: 1,
                 status: "in_progress",
                 reward_coins: 1,
                 completed_days: 0,

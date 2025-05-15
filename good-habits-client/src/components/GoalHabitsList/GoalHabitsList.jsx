@@ -13,9 +13,9 @@ const GoalHabitsList = ({ habitsData }) => {
     return (
         <div className="habit-list-container">
             <div className="habit-list-header">
-                <h2 className="habit-list-title">Your Goals</h2>
+                <h2 className="habit-list-title">Ваши цели</h2>
                 <button className="habit-list-see-all" onClick={() => navigate("/progress")}>
-                    See all
+                    См. все
                 </button>
             </div>
             <div className="habit-list-cards">
@@ -26,7 +26,7 @@ const GoalHabitsList = ({ habitsData }) => {
                         description={habit.description}
                         completedDays={progress?.completed_days || 0}
                         totalDays={habit.duration_days}
-                        frequency="Everyday" // Заглушка для частоты
+                        frequency="Каждый день"
                     />
                 ))}
             </div>

@@ -61,9 +61,9 @@ const HabitHistory = () => {
 
     return (
         <div className="habit-history-container">
-            <h1 className="title">Habit History</h1>
+            <h1 className="title">История привычек</h1>
             {habitHistory.length === 0 ? (
-                <p className="no-data">No completed habits found.</p>
+                <p className="no-data">Нет выполненых привычек.</p>
             ) : (
                 <ul className="history-habit-list">
                     {habitHistory.map(({ progress, habit }) => (
@@ -73,15 +73,15 @@ const HabitHistory = () => {
                             </h2>
                             {expandedHabits[habit.id] && (
                                 <div className="history-habit-details">
-                                    <p><strong>Description:</strong> {habit.description}</p>
-                                    <p><strong>Goal:</strong> {habit.goal}</p>
-                                    <p><strong>Duration:</strong> {habit.duration_days} days</p>
+                                    <p><strong>Описание:</strong> {habit.description}</p>
+                                    <p><strong>Цель:</strong> {habit.goal}</p>
+                                    <p><strong>Продолжительность:</strong> {habit.duration_days} дней</p>
                                 </div>
                             )}
-                            <p className="progress-info">Completed Days: {progress.completed_days} / {habit.duration_days}</p>
-                            <p className="progress-date">Start Date: {new Date(progress.start_date).toLocaleDateString()}</p>
+                            <p className="progress-info">Выполненные дни: {progress.completed_days} / {habit.duration_days}</p>
+                            <p className="progress-date">Дата старта: {new Date(progress.start_date).toLocaleDateString()}</p>
                             <h3 onClick={() => toggleCheckIns(progress.id)} className="checkins-toggle">
-                                Check-ins {expandedCheckIns[progress.id] ? "▲" : "▼"}
+                                Чек-ины {expandedCheckIns[progress.id] ? "▲" : "▼"}
                             </h3>
                             {expandedCheckIns[progress.id] && (
                                 <ul className="history-check-in-list">
@@ -89,12 +89,12 @@ const HabitHistory = () => {
                                         <li key={checkIn.id} className={`history-check-in-item ${checkIn.is_completed ? "history-completed" : "history-not-completed"}`}>
                                             <p className="check-in-date">{new Date(checkIn.check_in_date).toLocaleDateString()}</p>
                                             <p className="check-in-number">Check-in: {checkIn.check_in_number}</p>
-                                            <p className="check-in-status">{checkIn.is_completed ? "✅ Completed" : "❌ Not Completed"}</p>
+                                            <p className="check-in-status">{checkIn.is_completed ? "✅ Выполнен" : "❌ Не выполнен"}</p>
                                         </li>
                                     ))}
                                     {progress.check_ins.length > (visibleCheckIns[progress.id] || checkInsPerPage) && (
                                         <button onClick={() => loadMoreCheckIns(progress.id, progress.check_ins.length)} className="load-more-button">
-                                            Load More
+                                            Ещё
                                         </button>
                                     )}
                                 </ul>

@@ -8,7 +8,7 @@ function GoalHabitProgressCard({ title, completedDays, totalDays, frequency }) {
         <div className="habit-card-container">
             <div className="habit-card-header">
                 <h3 className="habit-card-title">{title}</h3>
-                <div className="habit-card-menu">⋮</div>
+                <div className="habit-card-menu"></div>
             </div>
             <div className="habit-card-progress">
                 <div className="habit-card-progress-bar">
@@ -18,7 +18,7 @@ function GoalHabitProgressCard({ title, completedDays, totalDays, frequency }) {
                     ></div>
                 </div>
                 <div className="habit-card-progress-info">
-                    {completedDays} from {totalDays} days target
+                    {completedDays} из {totalDays} дней
                 </div>
             </div>
             <div className="habit-card-frequency">{frequency}</div>

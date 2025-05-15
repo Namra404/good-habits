@@ -66,9 +66,9 @@ function EditUserHabitPage({ onClose, initialCheckInDate, isCompleted, checkInId
             />
 
             <div className="button-group">
-                <Button text="Cancel" color="grey" onClick={onClose} />
+                <Button text="Отменить" color="grey" onClick={onClose} />
                 <Button
-                    text="Save"
+                    text="Сохранить"
                     color="green"
                     onClick={handleSave}
                     disabled={isCompleted}
