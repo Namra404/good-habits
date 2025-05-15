@@ -1,11 +1,26 @@
-FROM node:18 AS build
+FROM node:22-alpine AS build
+
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install
+
+COPY package*.json .
+
+RUN --mount=type=cache,target=/root/.npm npm ci
+
 COPY . .
+
 RUN npm run build
 
-FROM node:18-slim
+FROM nginx:stable-alpine
+
+EXPOSE 80
+
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY ./prod/nginx.conf /etc/nginx/conf.d/default.conf
+
 WORKDIR /app
-COPY --from=build /app/dist ./dist
-CMD ["echo", "Frontend build completed"]
+
+COPY prod/start.sh .
+
+RUN chmod +x start.sh
+
+CMD ["sh", "./start.sh"]

@@ -16,7 +16,7 @@ const TelegramIntegration = () => {
     }, []);
 
     return (
-        <div>
+        <div style={{backgroundColor: 'red'}}>
             {/*<h3>Telegram WebApp Data:</h3>*/}
             {/*<pre>{JSON.stringify(user, null, 2)}</pre>*/}
             {/*<pre>{JSON.stringify(tgData, null, 2)}</pre>*/}
