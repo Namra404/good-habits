@@ -11,14 +11,16 @@ function HomePage() {
     const [habitsData, setHabitsData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const {user} = useUser();
-    const userId = user?.id;
     useEffect(() => {
         const fetchHabitsAndProgress = async () => {
+            if(!user) {
+                return;
+            }
             try {
                 // Получаем замоканный user_id
 
                 // Один запрос для получения привычек и прогресса
-                const fetchedData = await UserHabitService.getAllUserHabits(userId, "in_progress");
+                const fetchedData = await UserHabitService.getAllUserHabits(user.id, "in_progress");
                 setHabitsData(fetchedData);
             } catch (error) {
                 console.error("Failed to fetch habits and progress:", error);
@@ -28,7 +30,7 @@ function HomePage() {
         };
 
         fetchHabitsAndProgress();
-    }, []);
+    }, [user]);
 
     const currentDate = new Date().toLocaleDateString("ru-RU", {
         weekday: "long",
@@ -36,7 +38,7 @@ function HomePage() {
         month: "long",
     });
 
-    if (isLoading) {
+    if (isLoading || !user) {
         return <div>Loading...</div>;
     }
 
@@ -48,8 +50,8 @@ function HomePage() {
             <div className="header_container">
                 <h1 className="header_text">Привет, {user?.username}!</h1>
                 <p className="subheader_text">
-                    {habitsData.filter((h) => h.progress.completed_days > 0).length} из{" "}
-                    {habitsData.length} задач выполнены сегодня!
+                    {habitsData?.filter((h) => h.progress.completed_days > 0).length} из{" "}
+                    {habitsData?.length} задач выполнены сегодня!
                 </p>
             </div>
             <div className="habit_tracker_list">

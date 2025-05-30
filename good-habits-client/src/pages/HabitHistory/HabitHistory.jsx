@@ -8,7 +8,6 @@ import {useUser} from "@/store/user-provider.jsx";
 
 const HabitHistory = () => {
     const {user} = useUser();
-    const userId = user?.id;
     const [habitHistory, setHabitHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -19,8 +18,12 @@ const HabitHistory = () => {
 
     useEffect(() => {
         const fetchHabitHistory = async () => {
+
+            if(!user) {
+                return;
+            }
             try {
-                const data = await UserHabitService.getAllUserHabits(userId, "in_progress");
+                const data = await UserHabitService.getAllUserHabits(user.id, "in_progress");
                 setHabitHistory(data);
             } catch (err) {
                 setError("Failed to fetch habit history");
@@ -29,7 +32,7 @@ const HabitHistory = () => {
             }
         };
         fetchHabitHistory();
-    }, [userId]);
+    }, [user]);
 
     const toggleHabitDetails = (habitId) => {
         setExpandedHabits((prev) => ({

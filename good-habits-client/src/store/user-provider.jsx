@@ -1,6 +1,5 @@
 import React, {createContext, useContext, useEffect} from "react";
 import UserHabitService from "@/services/UserHabit.jsx";
-import error from "eslint-plugin-react/lib/util/error.js";
 import UserService from "@/services/User.jsx";
 
 const userContext = createContext(null);

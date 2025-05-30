@@ -94,6 +94,9 @@ class UserHabitService {
      * @returns {Promise<UserHabitProgress[]>} Массив привычек пользователя.
      */
     static async getAllUserHabits(userId, status) {
+        if(!userId){
+            return
+        }
         const url = status ? `/user_habit_progress/${userId}?status=${status}` : `/user_habit_progress/${userId}`;
         const response = await api.get(url);
         return response.data;

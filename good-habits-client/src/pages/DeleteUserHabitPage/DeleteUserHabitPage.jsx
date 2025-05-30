@@ -9,7 +9,7 @@ function DeleteUserHabitPage({id, onClose, setCheckIns}) {
     const modalRef = useRef(null);
     const handleDelete = () => {
         alert("Delete button clicked! Удали привычку из бд");
-        setCheckIns((prev) => prev.filter((item) => item.id !== id));
+        setCheckIns((prev) => prev?.filter((item) => item.id !== id));
     };
 
     const handleCancel = () => {

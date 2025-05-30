@@ -8,15 +8,17 @@ import AddHabitButton from "@/components/UI-kit/buttons/AddHabitButton/AddHabitB
 
 const GoalsDashboard = () => {
     const {user} = useUser();
-    const userId = user?.id;
     const [habits, setHabits] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchHabitProgress = async () => {
+            if(!user) {
+                return;
+            }
             try {
-                const data = await UserHabitService.getAllUserHabits(userId);
+                const data = await UserHabitService.getAllUserHabits(user.id);
                 setHabits(data);
             } catch (err) {
                 console.error("Ошибка загрузки привычек:", err);
@@ -27,14 +29,14 @@ const GoalsDashboard = () => {
         };
 
         fetchHabitProgress();
-    }, [userId]);
+    }, [user]);
 
     const calculateProgressPercentage = (completed, duration) => {
         return duration > 0 ? Math.min((completed / duration) * 100, 100) : 0;
     };
 
-    const achievedGoals = habits.filter(habit => habit.progress.status === "achieved");
-    const unachievedGoals = habits.filter(habit => habit.progress.status !== "achieved");
+    const achievedGoals = habits?.filter(habit => habit.progress.status === "achieved");
+    const unachievedGoals = habits?.filter(habit => habit.progress.status !== "achieved");
 
     if (loading) return <div>Загрузка...</div>;
     if (error) return <div className="error">{error}</div>;

@@ -13,14 +13,16 @@ function HabitTrackerList() {
     const [checkIns, setCheckIns] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { user } = useUser();
-    const userId = user?.id;
     const navigate = useNavigate(); // Хук для навигации
     // const userId = UserService.getMockedUserId();
 
     useEffect(() => {
         const fetchCheckIns = async () => {
+            if (!user){
+                return;
+            }
             try {
-                const fetchedCheckIns = await CheckinService.getTodayCheckIns(userId);
+                const fetchedCheckIns = await CheckinService.getTodayCheckIns(user.id);
                 setCheckIns(fetchedCheckIns || []);
             } catch (error) {
                 console.error("Failed to fetch check-ins:", error);
@@ -30,7 +32,7 @@ function HabitTrackerList() {
         };
 
         fetchCheckIns();
-    }, [userId]);
+    }, [user]);
 
     const onCheckInChange = (id, newStatus) => {
         setCheckIns((state) =>
@@ -54,7 +56,7 @@ function HabitTrackerList() {
         <div className="habit-tracker-list">
             <HabitProgress
                 totalHabits={checkIns.length}
-                completedHabits={checkIns.filter((habit) => habit.is_completed).length}
+                completedHabits={checkIns?.filter((habit) => habit.is_completed).length}
             />
             <div className="header">
                 <h1 className="title">Задачи сегодня</h1>

@@ -9,15 +9,16 @@ import {useUser} from "@/store/user-provider.jsx";
 
 const ComicsStore = () => {
     const { user } = useUser();
-    const userId = user?.id;
     const [coins, setCoins] = useState(0);
     const [comics, setComics] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchUserDataAndComics = async () => {
+            if (!user){
+                return;
+            }
             try {
-                const user = await UserService.getUserById(userId);
                 setCoins(user.coin_balance);
                 const allComics = await ComicService.getAllComics();
                 setComics(allComics);
@@ -29,7 +30,7 @@ const ComicsStore = () => {
         };
 
         fetchUserDataAndComics();
-    }, [userId]);
+    }, [user]);
 
     const handleBuyComic = async (comic) => {
         if (coins < comic.price) {
@@ -39,7 +40,7 @@ const ComicsStore = () => {
 
         try {
             await UserComicService.addUserComic({
-                user_id: userId,
+                user_id: user.id,
                 comic_id: comic.id,
             });
 

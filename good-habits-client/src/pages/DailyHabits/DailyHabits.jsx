@@ -11,12 +11,15 @@ const DailyHabits = () => {
     const [checkIns, setCheckIns] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const {user} = useUser();
-    const userId = user?.id;
     useEffect(() => {
         const loadHabits = async () => {
+            if(!user){
+                return
+            }
             setIsLoading(true);
+
             try {
-                const response = await CheckinService.getTodayCheckIns(userId, selectedDate);
+                const response = await CheckinService.getTodayCheckIns(user.id, selectedDate);
                 setCheckIns(response || []);
             } catch (error) {
                 console.error("Ошибка при загрузке привычек:", error);
@@ -26,7 +29,7 @@ const DailyHabits = () => {
         };
 
         loadHabits();
-    }, [selectedDate]);
+    }, [selectedDate, user]);
 
     const onCheckInChange = (id, newStatus) => {
         setCheckIns((state) =>
