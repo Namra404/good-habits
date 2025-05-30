@@ -73,7 +73,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./good-habits-client/dist:/usr/share/nginx/html:ro
+      - frontend-dist:/usr/share/nginx/html:ro
     depends_on:
       - app
       - frontend
