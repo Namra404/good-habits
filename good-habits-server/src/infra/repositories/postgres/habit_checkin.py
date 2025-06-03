@@ -249,7 +249,7 @@ class PostgresHabitCheckInRepository:
             )
             await self.session.execute(progress_update_query)
 
-            await send_congratulatory_message(self.session, user_id, progress_id)
+            await self.check_all_user_checkins_for_date_and_send_congrats(user_id, check_in_date.date())
 
         return True
 
@@ -264,6 +264,17 @@ class PostgresHabitCheckInRepository:
         rowcount = result.rowcount
         logger.info(f"Чек-ин обновлён, затронуто строк: {rowcount}")
         return rowcount
+
+    async def check_all_user_checkins_for_date_and_send_congrats(self, user_id: UUID, target_date: date) -> None:
+        all_check_ins = await self.get_check_ins_by_user_id_and_date(user_id, target_date)
+
+        if not all_check_ins:
+            return  # Нечего проверять
+
+        if all(check_in.is_completed for check_in in all_check_ins):
+            # Получим любой check_in, чтобы достать progress_id
+            first_check_in = all_check_ins[0]
+            await send_congratulatory_message(self.session, user_id, first_check_in.progress_id)
 
     async def delete_check_in(self, check_in_id: UUID) -> bool:
         """Удаление чек-ина по ID."""

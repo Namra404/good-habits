@@ -20,9 +20,9 @@ function DeleteUserHabitPage({id, onClose, setCheckIns}) {
         <div className="delete-modal" ref={modalRef}>
             <img src={crossSVG} alt="busket" className="close-button" onClick={handleCancel}/>
             <img src={busketSVG} alt="busket" className="delete-icon"/>
-            <h1 className="delete-title">Are you sure want to delete?</h1>
-            <Button text="Delete" color="orange" onClick={handleDelete} />
-            <Button text="Cancel" color="grey" onClick={handleCancel}/>
+            <h1 className="delete-title">ВЫ уверены что хотите удалить?</h1>
+            <Button text="Удалить" color="orange" onClick={handleDelete} />
+            <Button text="Отмена" color="grey" onClick={handleCancel}/>
         </div>
     );
 }

@@ -76,8 +76,8 @@ function HabitTracker({ check_in, onCheckInChange, setCheckIns, previousComplete
 
             {isOpen && (
                 <div className="menuRef" ref={menuRef}>
-                    <div onClick={() => setIsEditModalOpened(true)}>Edit</div>
-                    <div onClick={() => setIsDeleteModalOpened(true)}>Delete</div>
+                    <div onClick={() => setIsEditModalOpened(true)}>Изменить</div>
+                    <div onClick={() => setIsDeleteModalOpened(true)}>Удалить</div>
                 </div>
             )}
 

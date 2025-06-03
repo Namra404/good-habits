@@ -80,7 +80,7 @@ function HabitTrackerList() {
                     )
                 ) : (
                     <div className="empty-state">
-                        <p>No habits to track today. Add new habits to get started!</p>
+                        <p>Нет привычек. Создай ее!</p>
                     </div>
                 )}
             </div>
